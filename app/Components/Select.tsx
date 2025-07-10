@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-export function Select({ label, selectedValue, onValueChange, items }) {
+export default function Select({ label, selectedValue, onValueChange, items }) {
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}

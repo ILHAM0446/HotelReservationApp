@@ -1,19 +1,20 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-
-export function Button({ title, onPress }) {
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+export default function Button({ title, onPress }) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.buttonText}>{title.toUpperCase()}</Text>
+
+      <Text style={styles.buttonText}><Icon name="calendar-check" size={20} color="white" style={{ marginRight: 8 }} /> {title.toUpperCase()}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#f7b500', // Jaune vif comme sur la maquette
+    backgroundColor: '#f7b500',
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 30,
     alignItems: 'center',
     marginTop: 20,
     shadowColor: '#000',

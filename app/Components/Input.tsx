@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 
-export function Input({ label, value, onChangeText, placeholder, keyboardType = 'default' }) {
+export default function Input({ label, value, onChangeText, placeholder, keyboardType = 'default' }) {
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -17,14 +17,15 @@ export function Input({ label, value, onChangeText, placeholder, keyboardType = 
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
   },
   label: {
-    marginBottom: 4,
-    color: '#444',
-    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+    fontWeight:'500',
   },
   input: {
     backgroundColor: '#fff',

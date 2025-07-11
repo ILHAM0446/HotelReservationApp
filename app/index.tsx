@@ -34,7 +34,7 @@ export default function HomeScreen(): JSX.Element {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('restaurant')}
+          onPress={() => navigation.navigate('Restaurant')}
         >
           <Icon name="silverware-fork-knife" size={24} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>Réserver un Restaurant</Text>

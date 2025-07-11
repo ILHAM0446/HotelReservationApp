@@ -12,6 +12,7 @@ import {
   ImageBackground,
   Image,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Input from './Components/Input';
 import Button from './Components/Button';
@@ -20,7 +21,7 @@ import { styles as inputStyles } from './Components/Input';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useCapaciteMax from './Components/useCapaciteMax';
 import { Screenstyles } from './Components/Style';
-import { useNavigation } from '@react-navigation/native';
+import CalculCodePromo from './Components/CodePromo';
 
 export default function PiscineScreen(): JSX.Element {
   const [nom, setNom] = useState('');
@@ -51,6 +52,11 @@ const navigation = useNavigation<any>();
   const BebeDemiJournee = 0;
   const [isVisible, setIsVisible] = useState(true);
 
+  const DataCode = {
+    'MAGIC': { type: 'reduction', valeur: 10 },
+    'ILHAM22': { type: 'dh', valeur: 100 },
+    'ILHAM': { type: 'gratuit', valeur: 0 },
+  };
   const onChangeDate = (_event: DateTimePickerEvent, selectedDate?: Date) => {
     if (selectedDate) setDate(selectedDate);
     setShowDatePicker(false);
@@ -66,6 +72,8 @@ const navigation = useNavigation<any>();
       ? Adultes * AdulteJournee + Enfants * EnfantJournee + Bebes * BebeJournee
       : Adultes * AdulteDemiJournee + Enfants * EnfantDemiJournee + Bebes * BebeDemiJournee;
   };
+
+  const {FinalPrice , statutcode} = CalculCodePromo(codePromo, DataCode[codePromo]?.type, DataCode[codePromo]?.valeur, Price());
 
   const handleSubmit = (): void => {
     if (!nom || !prenom || !Email || !telephone || !date || !Adultes) {
@@ -284,11 +292,16 @@ const navigation = useNavigation<any>();
                   />
                 )}
               </View>
+              {statutcode && (
+                  <Text style={{ color: '#7ac277', marginBottom: 10 }}>
+                    ✅ Code promo appliqué avec succès !
+                  </Text>
+              )}
 
               <View style={Screenstyles.priceSection}>
                 <View style={Screenstyles.PriceRow}>
                   <Text style={Screenstyles.PriceText}>Prix Total</Text>
-                  <Text style={Screenstyles.PriceText}>{Price()} DH</Text>
+                  <Text style={Screenstyles.PriceText}>{statutcode ? `${FinalPrice} DH` : `${Price()} DH`}</Text>
                 </View>
               </View>
 
@@ -306,7 +319,7 @@ const navigation = useNavigation<any>();
             <Text style={{ textAlign: 'center', marginVertical: 10 }}>
               Merci {prenom} {nom}, votre réservation du {date.toLocaleDateString()} a été enregistrée avec succès !
             </Text>
-            <Text style={[Screenstyles.PriceText, { marginTop: 15 }]}>Prix: {Price()} DH</Text>
+            <Text style={[Screenstyles.PriceText, { marginTop: 15 }]}>Prix: {statutcode ? `${FinalPrice} DH` : `${Price()} DH`}</Text>
             <Pressable onPress={() => setModalVisible(false)} style={Screenstyles.modalButton}>
               <Text style={Screenstyles.modalButtonText}>Fermer</Text>
             </Pressable>

@@ -8,6 +8,7 @@ import type { DateTimePickerEvent } from '@react-native-community/datetimepicker
 import { styles } from './Components/Input';
 import { Calendar,Bus,Check } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import CalculCodePromo from './Components/CodePromo';
 
 export default function TransportReservationForm() {
   const [lastName, setLastName] = useState('');
@@ -27,6 +28,7 @@ export default function TransportReservationForm() {
   const [successMessageVisible, setSuccessMessageVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+
   // Tarifs
   const ADULT_PRICE = 30;
   const CHILD_PRICE = 30;
@@ -34,15 +36,10 @@ export default function TransportReservationForm() {
 
   // Calcul du prix total
   const calculateTotal = () => {
-    let total = adults * ADULT_PRICE + children * CHILD_PRICE + babies * BABY_PRICE;
-
-    // Appliquer une réduction de 10% si un code promo est saisi
-    if (promoCode) {
-      total *= 0.9;
-    }
-
+    let total = adults * ADULT_PRICE + children * CHILD_PRICE ;
     return total.toFixed(2);
   };
+
 
   const onChangeDate = (_event: DateTimePickerEvent, selectedDate?: Date) => {
       if (selectedDate) {
@@ -50,6 +47,14 @@ export default function TransportReservationForm() {
       }
       setShowDatePicker(false);
     };
+
+    const DataCode = {
+        'MAGIC': { type: 'reduction', valeur: 10 },
+        'ILHAM22': { type: 'dh', valeur: 100 },
+        'ILHAM': { type: 'gratuit', valeur: 0 },
+      };
+
+  const {FinalPrice , statutcode} = CalculCodePromo(promoCode, DataCode[promoCode]?.type, DataCode[promoCode]?.valeur, calculateTotal());
 
   const lieux = [
     { label: '', value: 'choisir' },
@@ -230,7 +235,7 @@ export default function TransportReservationForm() {
       {/* Prix total */}
       <View style={Formstyles.totalContainer}>
         <Text style={Formstyles.totalLabel}>Prix Total</Text>
-        <Text style={Formstyles.totalPrice}>{calculateTotal()} DH</Text>
+        <Text style={Formstyles.totalPrice}>{statutcode ? `${FinalPrice} DH` : `${calculateTotal()} DH`}</Text>
       </View>
 
       {/* Code promo */}
@@ -255,6 +260,11 @@ export default function TransportReservationForm() {
           </View>
         )}
       </View>
+      {statutcode && (
+                        <Text style={{ color: '#7ac277', marginBottom: 10 }}>
+                          ✅ Code promo appliqué avec succès !
+                        </Text>
+                    )}
       <Button title="Valider" onPress={handleSubmit} />
       </View>
 
@@ -303,7 +313,7 @@ export default function TransportReservationForm() {
           </View>
 
           <View style={Formstyles.successTotal}>
-            <Text style={Formstyles.successTotalText}>Total: {calculateTotal()} DH</Text>
+            <Text style={Formstyles.successTotalText}>Total: {statutcode ? `${FinalPrice} DH` : `${calculateTotal()} DH`}</Text>
           </View>
 
           <TouchableOpacity

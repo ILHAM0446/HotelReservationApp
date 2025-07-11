@@ -6,7 +6,7 @@ import Select from "./Components/Select";
 import NumberInput from "./Components/NumberInput";
 import SelectDate from "./Components/SelectDate" ;
 
-export default function Restaurant () {
+export default function restaurant () {
     const [ LastName , setLastName] = useState('');
     const [ FirstName , setFirstName] = useState('');
     const [ Email , setEmail] = useState('');
@@ -75,13 +75,12 @@ export default function Restaurant () {
          <Select
             label="Source dont vous avez trouvez nous"
             selectedValue={Source}
-            onValueChange={setSource}
+            onChangeValue={setSource}
             items={[
-                {label: 'select source' , value: '' },
+                {label: 'select source' , value: 'select_source' },
                 {label: 'Agence' , value: 'agency'},
                 {label: 'Web' , value: 'web'}
             ]}
-            placeholder="Choisir"
          />
          <View style= {styles.row}>
          <View style={styles.equalWidthContainer}>

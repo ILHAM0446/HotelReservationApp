@@ -1,12 +1,12 @@
 import  React , {useState} from "react";
 import {View , Text ,StyleSheet, ScrollView , KeyboardAvoidingView , Platform} from "react-native";
-import {Input} from "./Components/Input";
-import {Button} from "./Components/Button";
-import {Select} from "./Components/Select";
-import {NumberInput} from "./Components/NumberInput";
-import {SelectDate} from "./Components/SelectDate" ;
+import Input from "./Components/Input";
+import Button from "./Components/Button";
+import Select from "./Components/Select";
+import NumberInput from "./Components/NumberInput";
+import SelectDate from "./Components/SelectDate" ;
 
-export  function restaurant () {
+export default function restaurant () {
     const [ LastName , setLastName] = useState('');
     const [ FirstName , setFirstName] = useState('');
     const [ Email , setEmail] = useState('');

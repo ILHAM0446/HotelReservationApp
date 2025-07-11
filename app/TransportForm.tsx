@@ -158,7 +158,7 @@ export default function TransportReservationForm() {
         selectedValue={departurePlace}
         onValueChange={(value) => setDeparturePlace(value)}
         items={lieux}
-        placeholder="Choisir"
+
       />
 
       {/* Champ Date Aller */}
@@ -188,6 +188,7 @@ export default function TransportReservationForm() {
               selectedValue={departureTime}
               onValueChange={(value) => setDeparturePlace(value)}
               items={time}
+              placeholder="Choisir"
             />
       <View style={Formstyles.FlexContainer}>
         <View style={Formstyles.inputField}>

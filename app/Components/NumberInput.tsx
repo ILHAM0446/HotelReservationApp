@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-export function NumberInput({ label, value, onChange, min = 1, max = 99 }) {
+export default function NumberInput({ label, value, onChange, min = 1, max = 99 }) {
   const handleIncrement = () => {
     const newValue = Math.min(Number(value) + 1, max);
     onChange(newValue.toString());

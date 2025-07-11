@@ -1,12 +1,12 @@
 import  React , {useState} from "react";
 import {View , Text ,StyleSheet, ScrollView , KeyboardAvoidingView , Platform} from "react-native";
-import {Input} from "./Components/Input";
-import {Button} from "./Components/Button";
-import {Select} from "./Components/Select";
-import {NumberInput} from "./Components/NumberInput";
-import {SelectDate} from "./Components/SelectDate" ;
+import Input from "./Components/Input";
+import Button from "./Components/Button";
+import Select from "./Components/Select";
+import NumberInput from "./Components/NumberInput";
+import SelectDate from "./Components/SelectDate" ;
 
-export  function restaurant () {
+export default function Restaurant () {
     const [ LastName , setLastName] = useState('');
     const [ FirstName , setFirstName] = useState('');
     const [ Email , setEmail] = useState('');
@@ -75,12 +75,13 @@ export  function restaurant () {
          <Select
             label="Source dont vous avez trouvez nous"
             selectedValue={Source}
-            onChangeValue={setSource}
+            onValueChange={setSource}
             items={[
-                {label: 'select source' , value: 'select_source' },
+                {label: 'select source' , value: '' },
                 {label: 'Agence' , value: 'agency'},
                 {label: 'Web' , value: 'web'}
             ]}
+            placeholder="Choisir"
          />
          <View style= {styles.row}>
          <View style={styles.equalWidthContainer}>

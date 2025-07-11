@@ -10,7 +10,7 @@ interface SelectedDatesProps {
     minimumDate?: Date | null ;
     }
 
-export function SelectDates ( { label , value , onChange , error , minimumDate = null ,}: SelectedDatesProps){
+export default function SelectDates ( { label , value , onChange , error , minimumDate = null ,}: SelectedDatesProps){
     const [showPicker , setShowPicker] = useState(false);
     const handleChange = ( event: any , selectedDate?: Date ) => {
         setShowPicker( Platform.OS === 'ios');

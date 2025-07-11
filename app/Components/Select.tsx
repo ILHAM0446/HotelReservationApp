@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-export function Select({ label, selectedValue, onValueChange, items }) {
+export default function Select({ label, selectedValue, onValueChange, items = [], placeholder }) {
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -11,10 +11,20 @@ export function Select({ label, selectedValue, onValueChange, items }) {
           selectedValue={selectedValue}
           onValueChange={onValueChange}
           style={styles.picker}
-          dropdownIconColor="#333"
+          dropdownIconColor="#666"
+          mode={Platform.OS === 'ios' ? 'dialog' : 'dropdown'}
         >
           {items.map((item) => (
-            <Picker.Item key={item.value} label={item.label} value={item.value} />
+            <Picker.Item
+                  key={item.value}
+                  label={item.label}
+                  value={item.value}
+                  color= '#333'
+                  style={[
+                    styles.item,
+                    item.value === '' ? styles.placeholderItem : styles.optionItem,
+                  ]}
+                />
           ))}
         </Picker>
       </View>
@@ -24,12 +34,13 @@ export function Select({ label, selectedValue, onValueChange, items }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 15,
   },
   label: {
-    marginBottom: 4,
-    color: '#444',
-    fontWeight: 'bold',
+      fontSize: 14,
+      color: '#666',
+      marginBottom: 8,
+      fontWeight:'500',
   },
   pickerWrapper: {
     backgroundColor: '#fff',
@@ -41,9 +52,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
+    height: 42, // Ajouté pour fixer la hauteur
+    justifyContent: 'center', // Centrer verticalement
   },
   picker: {
-    height: 50,
+    height: 60,
+    color: '#333',
+    width: '100%',
+  },
+  item: {
+    fontSize: 16,
+    paddingVertical: 5,
     color: '#333',
   },
+
+
 });
+
+
+

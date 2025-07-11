@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export function Button({ title, onPress }) {
+export default function Button({ title, onPress }) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.buttonText}>{title.toUpperCase()}</Text>

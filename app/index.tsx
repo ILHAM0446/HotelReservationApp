@@ -26,7 +26,7 @@ export default function HomeScreen(): JSX.Element {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Transport')}
+          onPress={() => navigation.navigate('TransportForm')}
         >
           <Icon name="bus" size={24} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>Réserver un Transport</Text>
@@ -34,7 +34,7 @@ export default function HomeScreen(): JSX.Element {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Restaurant')}
+          onPress={() => navigation.navigate('restaurant')}
         >
           <Icon name="silverware-fork-knife" size={24} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>Réserver un Restaurant</Text>

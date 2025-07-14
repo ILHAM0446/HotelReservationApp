@@ -353,7 +353,7 @@ const Formstyles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
-        marginBottom: 50,
+        marginBottom: 100,
         },
     backgroundImage: {
       flex: 1,

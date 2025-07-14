@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
 import i18n from '../../i18n';
+import { useIsFocused } from '@react-navigation/native'; // <- Ajouté
 
 export default function LanguageSelector() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [locale, setLocale] = useState(i18n.locale);
+  const isFocused = useIsFocused(); // <- Ajouté
 
   const toggleMenu = () => setMenuVisible(!menuVisible);
 
   const changeLanguage = (lang: 'fr' | 'en') => {
     i18n.locale = lang;
     setLocale(lang);
-    setMenuVisible(false); // Fermer le menu après le clic
+    setMenuVisible(false);
   };
+
+  useEffect(() => {
+    setLocale(i18n.locale);
+  }, [isFocused]);
 
   return (
     <View style={styles.wrapper}>
@@ -43,6 +49,7 @@ export default function LanguageSelector() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   wrapper: {

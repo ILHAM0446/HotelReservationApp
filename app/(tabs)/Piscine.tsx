@@ -43,7 +43,7 @@ React.useEffect(() => {
   const [prenom, setPrenom] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [Adultes, setAdultes] = useState(0);
+  const [Adultes, setAdultes] = useState(1);
   const [Enfants, setEnfants] = useState(0);
   const [Bebes, setBebes] = useState(0);
   const [telephone, setTelephone] = useState('');
@@ -252,7 +252,7 @@ React.useEffect(() => {
                   </View>
                 </View>
 
-                {isCapaciteDepassee && <Text style={{ color: '#D32F2F', marginBottom: 10 }}>🚫 {message}</Text>}
+                {isCapaciteDepassee && <Text style={{ color: '#D32F2F', marginBottom: 10 }}>🚫 {i18n.t('messageCapacite')}</Text>}
 
                 <View style={Screenstyles.section}>
                   <View style={Screenstyles.codePromoContainer}>

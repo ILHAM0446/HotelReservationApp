@@ -32,6 +32,8 @@ export default {
   applySuccess: "✅ Code promo appliqué avec succès !",
   invalidEmail: "Email invalide ❌",
   error: "Veuillez remplir tous les champs obligatoires.",
+  messageCapacite: "Capacité dépassée !",
+
 
   // Transport
   transportTitle: "RÉSERVATION TRANSPORT",
@@ -51,4 +53,9 @@ export default {
   total: "Total",
   enterPromoCode: "Entrez votre code promo",
   successDetails: "Détails de la réservation",
+  //Accueil
+  welcome: "Bonjour à Magic App",
+  buttonPiscine: "Réserver la Piscine",
+  buttonTransport: "Réserver le Transport",
+  buttonRestaurant: "Réserver le Restaurant",
 };

@@ -123,14 +123,12 @@ export default function TransportReservationForm() {
           >
             <SafeAreaView style={Formstyles.modalOverlay}>
               <ScrollView contentContainerStyle={Formstyles.scrollContainer}>
-                <View style={{ alignItems: 'center' }}>
-                  <Image
-                    source={{
-                      uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png',
-                    }}
-                    style={{ width: 120, height: 60, resizeMode: 'contain' }}
-                  />
-                </View>
+             <View style={{ marginBottom: -15, top: -7, left: 10, }}>
+             <Image
+              source={{ uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png',}}
+              style={{ width: 100, height: 60, resizeMode: 'contain' }}
+              />
+        </View>
                 <LanguageSelector />
 
                 <View style={Formstyles.formContainer}>

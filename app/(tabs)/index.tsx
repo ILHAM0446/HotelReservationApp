@@ -1,11 +1,22 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import i18n from '../../i18n';
+import LanguageSelector from '../Components/LanguageSelector';
+
 
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation<any>();
+  const [, forceUpdate] = useState(false);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      forceUpdate((prev) => !prev);
+    }, 500);
+return () => clearInterval(interval);
+}, []);
 
   return (
     <ImageBackground
@@ -13,15 +24,22 @@ export default function HomeScreen(): JSX.Element {
       style={styles.background}
       blurRadius={2}
     >
+        <View style={{ marginBottom: -15, top: -7, left: 10, }}>
+             <Image
+              source={{ uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png',}}
+              style={{ width: 100, height: 60, resizeMode: 'contain' }}
+              />
+        </View>
+    <LanguageSelector />
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Bienvenue à Magic App</Text>
+        <Text style={styles.title}>{i18n.t('welcome')}</Text>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('Piscine')}
         >
           <Icon name="pool" size={24} color="#fff" style={styles.icon} />
-          <Text style={styles.buttonText}>Réserver la Piscine</Text>
+          <Text style={styles.buttonText}>{i18n.t('buttonPiscine')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -29,7 +47,7 @@ export default function HomeScreen(): JSX.Element {
           onPress={() => navigation.navigate('TransportForm')}
         >
           <Icon name="bus" size={24} color="#fff" style={styles.icon} />
-          <Text style={styles.buttonText}>Réserver un Transport</Text>
+          <Text style={styles.buttonText}>{i18n.t('buttonTransport')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -37,7 +55,7 @@ export default function HomeScreen(): JSX.Element {
           onPress={() => navigation.navigate('Restaurant')}
         >
           <Icon name="silverware-fork-knife" size={24} color="#fff" style={styles.icon} />
-          <Text style={styles.buttonText}>Réserver un Restaurant</Text>
+          <Text style={styles.buttonText}>{i18n.t('buttonRestaurant')}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </ImageBackground>

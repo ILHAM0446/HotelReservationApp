@@ -32,6 +32,7 @@ export default {
   applySuccess: "✅ Promo code successfully applied!",
   invalidEmail: "Invalid email ❌",
   error: "Please fill in all required fields.",
+  messageCapacite: "Capacity exceeded!",
 
   // Transport
   transportTitle: "TRANSPORT RESERVATION",
@@ -51,4 +52,9 @@ export default {
   total: "Total",
   enterPromoCode: "Enter your promo code",
   successDetails: "Reservation Details",
+  //Accueil
+  welcome: "Hello to Magic App",
+  buttonPiscine: "Reserve the pool",
+  buttonTransport: "Reserve the transport",
+  buttonRestaurant: "Reserve the restaurant",
 };

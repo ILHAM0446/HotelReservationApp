@@ -1,19 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Switch,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-  Platform,
-  Modal,
-  ImageBackground,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Image,
-} from 'react-native';
+import {View,Text,StyleSheet,Switch,ScrollView,Alert,TouchableOpacity,Platform,Modal,ImageBackground,SafeAreaView,KeyboardAvoidingView,Image,} from 'react-native';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
 import Select from '../Components/Select';
@@ -25,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
 import LanguageSelector from '../Components/LanguageSelector';
+import CheckBox from '@react-native-community/checkbox';
 
 export default function TransportReservationForm() {
   const [_, forceUpdate] = useState(false);
@@ -53,6 +40,7 @@ export default function TransportReservationForm() {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
   const [successMessageVisible, setSuccessMessageVisible] = useState(false);
+  const [showSchedule, setShowSchedule] = useState(false);
 
   const ADULT_PRICE = 30;
   const CHILD_PRICE = 30;
@@ -113,7 +101,7 @@ export default function TransportReservationForm() {
           style={Formstyles.backgroundImage}
         >
 
-<KeyboardAvoidingView
+    <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 , marginBottom: -50}}
           >
@@ -155,20 +143,23 @@ export default function TransportReservationForm() {
                       />
                     </View>
                   </View>
-
+              <View style={Formstyles.FlexContainer}>
+                <View style={Formstyles.inputField}>
                   <Input
                     label={i18n.t('email')}
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                   />
-
+                 </View>
+                 <View style={Formstyles.inputField}>
                   <Input
                     label={i18n.t('reservationCode')}
                     value={reservationCode}
                     onChangeText={setReservationCode}
                   />
-
+                </View>
+               </View>
                   <Select
                     label={i18n.t('departurePlace')}
                     selectedValue={departurePlace}
@@ -204,25 +195,24 @@ export default function TransportReservationForm() {
                     onValueChange={setDepartureTime}
                     items={time}
                   />
-
+              <View style={Formstyles.FlexContainer}>
+                <View style={Formstyles.inputField}>
                   <Input
                     label={i18n.t('adults')}
                     value={String(adults)}
                     onChangeText={(text) => setAdults(Number(text))}
                     keyboardType="numeric"
                   />
+                  </View>
+                 <View style={Formstyles.inputField}>
                   <Input
                     label={i18n.t('children')}
                     value={String(children)}
                     onChangeText={(text) => setChildren(Number(text))}
                     keyboardType="numeric"
                   />
-                  <Input
-                    label={i18n.t('babies')}
-                    value={String(babies)}
-                    onChangeText={(text) => setBabies(Number(text))}
-                    keyboardType="numeric"
-                  />
+                  </View>
+                 </View>
 
                   <View style={Formstyles.promoHeader}>
                     <Text>{i18n.t('usePromo')}</Text>
@@ -256,7 +246,47 @@ export default function TransportReservationForm() {
                   </View>
 
                   <Button title={i18n.t('validate')} onPress={handleSubmit} />
-                </View>
+                  </View>
+                  <View style={Formstyles.scheduleToggle}>
+                    <Text style={Formstyles.switchLabel}>Voir les horaires et prix</Text>
+                    <Switch
+                      value={showSchedule}
+                      onValueChange={setShowSchedule}
+                      trackColor={{ false: '#ccc', true: '#AECDF7' }}
+                      thumbColor={showSchedule ? '#1e40af' : '#1e40af'}
+                    />
+                  </View>
+
+                {showSchedule && (
+                  <View style={Formstyles.scheduleContainer}>
+                    <Text style={Formstyles.scheduleTitle}>Horaires et Tarifs</Text>
+
+                    <Text style={Formstyles.scheduleSubtitle}>Aqua Mirage → Jamaa El Fna</Text>
+                    <Text style={Formstyles.scheduleText}>
+                      10h00 : 30 Dhs{'\n'}
+                      12h30 : Gratuit / Free of charge{'\n'}
+                      14h30 : 30 Dhs{'\n'}
+                      16h00 : 30 Dhs{'\n'}
+                      17h30 : 30 Dhs{'\n'}
+                      19h00 : Gratuit / Free of charge{'\n'}
+                      20h00 : 30 Dhs{'\n'}
+                      23h00 : Gratuit / Free of charge
+                    </Text>
+
+                    <Text style={Formstyles.scheduleSubtitle}>Jamaa El Fna → Aqua Mirage</Text>
+                    <Text style={Formstyles.scheduleText}>
+                      10h30 : Gratuit / Free of charge{'\n'}
+                      13h00 : 30 Dhs{'\n'}
+                      15h00 : Gratuit / Free of charge{'\n'}
+                      16h30 : 30 Dhs{'\n'}
+                      18h00 : 30 Dhs{'\n'}
+                      19h30 : 30 Dhs{'\n'}
+                      22h30 : 30 Dhs{'\n'}
+                      23h30 : Gratuit / Free of charge
+                    </Text>
+                  </View>
+                )}
+
               </ScrollView>
             </SafeAreaView>
           </LinearGradient>
@@ -555,4 +585,54 @@ const Formstyles = StyleSheet.create({
       fontWeight: '600',
       fontSize: 16,
     },
+scheduleContainer: {
+  backgroundColor: 'rgba(255, 255, 255, 0.90)',
+  borderRadius: 10,
+  padding: 16,
+  marginBottom:0,
+  marginHorizontal:20,
+  borderWidth: 1,
+  borderColor: '#ddd',
+  shadowColor: '#000',
+  shadowOpacity: 0.05,
+  shadowOffset: { width: 0, height: 2 },
+  elevation: 2,
+  top:-110,
+},
+scheduleTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 8,
+  color: '#1e40af',
+  textAlign: 'center',
+},
+scheduleSubtitle: {
+  fontSize: 16,
+  fontWeight: '600',
+  marginTop: 12,
+  marginBottom: 4,
+  color: '#333',
+},
+scheduleText: {
+  fontSize: 14,
+  color: '#555',
+  lineHeight: 20,
+},
+scheduleToggle: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginVertical: 12,
+  paddingHorizontal: 10,
+  paddingVertical: 8,
+  top:-100,
+},
+switchLabel:{
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginLeft:30,
+    },
+
 });

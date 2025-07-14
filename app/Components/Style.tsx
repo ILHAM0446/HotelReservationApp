@@ -1,6 +1,16 @@
 import { StyleSheet } from 'react-native';
 
 export const Screenstyles = StyleSheet.create({
+   fakeModalWrapper: {
+     position: 'absolute',
+     top: 0,
+     bottom: 0,
+     left: 0,
+     right: 0,
+     zIndex: 10,
+     backgroundColor: 'rgba(255,255,255,0)', // utile pour cliquer derrière si nécessaire
+   },
+
   backgroundImage: {
     flex: 1,
   },
@@ -13,15 +23,14 @@ export const Screenstyles = StyleSheet.create({
   logo: {
     width: 100,
     height: 60,
+    marginBottom: -45,
     resizeMode: 'contain',
   },
   container: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
-    paddingBottom: 50,
-
-
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',

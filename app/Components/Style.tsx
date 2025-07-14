@@ -92,6 +92,7 @@ export const Screenstyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.85)',
     borderRadius: 20,
     padding: 20,
+    marginBottom: 30,
   },
   TitleForm: {
     fontSize: 18,

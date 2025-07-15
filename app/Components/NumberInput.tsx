@@ -89,4 +89,68 @@ const styles = StyleSheet.create({
     fontSize: 18,
     backgroundColor: '#fff',
   },
+
+
+
+
+
+  timePickerModal: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+},
+timePickerContainer: {
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 20,
+    width: '80%',
+    maxHeight: '60%',
+},
+timePickerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+    color: '#333',
+},
+timeSlotsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+},
+timeSlotButton: {
+    backgroundColor: '#f5f5f5',
+    padding: 12,
+    margin: 5,
+    borderRadius: 8,
+    width: 80,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+},
+timeSlotButtonSelected: {
+    backgroundColor: '#007AFF',
+},
+timeSlotText: {
+    fontSize: 16,
+    color: '#333',
+},
+timeSlotTextSelected: {
+    color: 'white',
+},
+
 });
+
+
+
+
+

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n from '../../i18n';
 import LanguageSelector from '../Components/LanguageSelector';
-import { useLanguage } from '../Context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 import Header from '../Components/header';
 
 

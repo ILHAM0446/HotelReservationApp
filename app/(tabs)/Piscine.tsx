@@ -26,7 +26,7 @@ import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
 import Header from '../Components/header';
 import { checkCapacite } from '../api/PiscineAPI';
-import { useLanguage } from '../Context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function PiscineScreen(): JSX.Element {
 

@@ -142,7 +142,7 @@ export default function restaurant () {
 
 return (
         <ImageBackground 
-            source={require('C:/Users/Imane/HotelReservationApp/assets/images/slider2.jpg')}
+            source={require('../../assets/images/slider2.jpg')}
             style={styles.background}
             resizeMode="cover"
         >

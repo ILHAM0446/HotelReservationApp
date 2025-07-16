@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {View,Text,StyleSheet,Switch,ScrollView,Alert,TouchableOpacity,Platform,Modal,ImageBackground,SafeAreaView,KeyboardAvoidingView,Image,} from 'react-native';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
@@ -11,20 +11,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
 import LanguageSelector from '../Components/LanguageSelector';
-import CheckBox from '@react-native-community/checkbox';
+import { Formstyles } from '../Components/Style';
+import { fetchHoursByType, checkCapacity } from '../api/transportAPI';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function TransportReservationForm() {
-  const [_, forceUpdate] = useState(false);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate((prev) => !prev);
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-
+  const { language } = useLanguage();
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -41,15 +33,25 @@ export default function TransportReservationForm() {
   const [isVisible, setIsVisible] = useState(true);
   const [successMessageVisible, setSuccessMessageVisible] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [hoursOptions, setHoursOptions] = useState([]);
 
+  const formatDateForAPI = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   const ADULT_PRICE = 30;
   const CHILD_PRICE = 30;
 
   const calculateTotal = () =>
     (adults * ADULT_PRICE + children * CHILD_PRICE).toFixed(2);
 
-  const onChangeDate = (_event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (selectedDate) setDate(selectedDate);
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'set' && selectedDate) {
+      setDate(selectedDate);
+    }
     setShowDatePicker(false);
   };
 
@@ -68,27 +70,69 @@ export default function TransportReservationForm() {
 
   const lieux = [
     { label: i18n.t('choose'), value: 'choisir' },
-    { label: 'Aéroport', value: 'aeroport' },
-    { label: 'Gare', value: 'gare' },
-    { label: 'Centre-ville', value: 'centre_ville' },
-  ];
-
-  const time = [
-    { label: i18n.t('choose'), value: 'choisir' },
-    { label: '07:00 (30dh)', value: '7h' },
-    { label: '13:00 (20dh)', value: '13h' },
+    { label: 'Aqua Mirage', value: 'aqua' },
+    { label: 'Jamaa El Fna', value: 'jamaa' },
   ];
 
   const validateEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!lastName || !firstName || !email || !date || !validateEmail(email)) {
       alert(i18n.t('error'));
       return;
     }
-    setSuccessMessageVisible(true);
+
+    if (!departurePlace || !departureTime) {
+      alert(i18n.t('chooseDeparture'));
+      return;
+    }
+
+    try {
+      const formattedDate = formatDateForAPI(date);
+
+      const capacityResponse = await checkCapacity({
+        date: formattedDate,
+        heure: departureTime,
+        adults,
+        children,
+      });
+      console.log('Réponse complète de checkCapacity:', capacityResponse);
+
+
+      const { code, status, message } = capacityResponse;
+
+      if (code === 200 && status) {
+        setSuccessMessageVisible(true);
+      } else if (code === 400) {
+        Alert.alert('Capacité insuffisante', message || 'Aucune place disponible.');
+      } else if (code === 500) {
+        Alert.alert('Erreur serveur', message || 'Une erreur technique est survenue.');
+      } else {
+        Alert.alert('Erreur inconnue', 'Une erreur est survenue. Veuillez réessayer.');
+      }
+    } catch (error) {
+      Alert.alert('Erreur réseau', 'Impossible de contacter le serveur');
+    }
   };
+
+  const handleDeparturePlaceChange = async (selectedPlace) => {
+    setDeparturePlace(selectedPlace);
+    setDepartureTime('');
+
+    if (!selectedPlace || selectedPlace === 'choisir') {
+      setHoursOptions([]);
+      return;
+    }
+
+    try {
+      const options = await fetchHoursByType(selectedPlace);
+      setHoursOptions(options);
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de récupérer les horaires');
+    }
+  };
+
 
   return (
     <>
@@ -161,7 +205,7 @@ export default function TransportReservationForm() {
                   <Select
                     label={i18n.t('departurePlace')}
                     selectedValue={departurePlace}
-                    onValueChange={setDeparturePlace}
+                    onValueChange={handleDeparturePlaceChange}
                     items={lieux}
                   />
 
@@ -191,8 +235,9 @@ export default function TransportReservationForm() {
                     label={i18n.t('departureTime')}
                     selectedValue={departureTime}
                     onValueChange={setDepartureTime}
-                    items={time}
+                    items={hoursOptions}
                   />
+
               <View style={Formstyles.FlexContainer}>
                 <View style={Formstyles.inputField}>
                   <Input
@@ -346,291 +391,3 @@ export default function TransportReservationForm() {
 
 
 
-const Formstyles = StyleSheet.create({
-    fakeModalWrapper: {
-         position: 'absolute',
-         top: 0,
-         bottom: 0,
-         left: 0,
-         right: 0,
-         zIndex: 10,
-         backgroundColor: 'rgba(255,255,255,0)', // utile pour cliquer derrière si nécessaire
-       },
-  backgroundImage: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-      },
-  overlay: {
-      flex: 1,
-    },
-  scrollContainer: {
-        flexGrow: 1,
-        paddingBottom: 20,
-      },
-      transparentBackground: {
-        backgroundColor: 'transparent',
-      },
-  formContainer: {
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        borderRadius: 20,
-        padding: 20,
-        margin: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 5,
-        marginBottom: 100,
-        },
-    backgroundImage: {
-      flex: 1,
-      width: '100%',
-      height: '100%',
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.2)',
-      justifyContent: 'center',
-    },
-
-  container: {
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-    flexGrow: 1,
-
-  },
-
-  formHeader: {
-    backgroundColor: '#f9b300',
-    paddingVertical: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    alignItems: 'center',
-    marginHorizontal: -20,
-    marginTop: -20,
-    marginBottom:25,
-  },
-  formHeaderText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-
-    titleSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 20,
-    },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-
-  inputContainer: {
-    marginBottom: 15,
-  },
-
-  FlexContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  passengersLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 8,
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-
-  totalContainer: {
-    flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingVertical: 15,
-      backgroundColor: '#FEF3C7',
-      paddingHorizontal: 15,
-      borderRadius: 8,
-      marginTop: 10,
-  },
-  totalLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#92400e',
-  },
-  totalPrice: {
-    fontSize: 18,
-      fontWeight: 'bold',
-      color: '#92400e',
-  },
-  inputField: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  promoContainer: {
-    paddingHorizontal: 12,
-    marginBottom: 0,
-  },
-  promoHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  promoLabel: {
-    fontSize: 16,
-    color: '#666',
-    fontWeight: '500',
-  },
-  successOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
-
-    successContainer: {
-      backgroundColor: 'white',
-      borderRadius: 20,
-      padding: 25,
-      width: '100%',
-      maxWidth: 400,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 10,
-      elevation: 5,
-    },
-
-    successHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#e5e7eb',
-      paddingBottom: 15,
-    },
-
-    successIcon: {
-      backgroundColor: '#f9b300',
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 10,
-    },
-
-    successTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: '#1f2937',
-    },
-
-    successContent: {
-      marginVertical: 1,
-    },
-
-    successRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 5,
-    },
-
-    successLabel: {
-      fontSize: 15,
-      color: '#6b7280',
-      fontWeight: '500',
-      flex: 1,
-    },
-
-    successValue: {
-      fontSize: 15,
-      color: '#1f2937',
-      fontWeight: '600',
-      flex: 1,
-      textAlign: 'right',
-    },
-
-    successTotal: {
-      marginTop: 15,
-      paddingTop: 15,
-      borderTopWidth: 1,
-      borderTopColor: '#e5e7eb',
-    },
-
-    successTotalText: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#1e40af',
-      textAlign: 'center',
-    },
-
-    closeButton: {
-      marginTop: 13,
-      backgroundColor: '#1e40af',
-      borderRadius: 10,
-      paddingVertical: 12,
-      alignItems: 'center',
-    },
-
-    closeButtonText: {
-      color: 'white',
-      fontWeight: '600',
-      fontSize: 16,
-    },
-scheduleContainer: {
-  backgroundColor: 'rgba(255, 255, 255, 0.90)',
-  borderRadius: 10,
-  padding: 16,
-  marginBottom:0,
-  marginHorizontal:20,
-  borderWidth: 1,
-  borderColor: '#ddd',
-  shadowColor: '#000',
-  shadowOpacity: 0.05,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 2,
-  top:-110,
-},
-scheduleTitle: {
-  fontSize: 18,
-  fontWeight: 'bold',
-  marginBottom: 8,
-  color: '#1e40af',
-  textAlign: 'center',
-},
-scheduleSubtitle: {
-  fontSize: 16,
-  fontWeight: '600',
-  marginTop: 12,
-  marginBottom: 4,
-  color: '#333',
-},
-scheduleText: {
-  fontSize: 14,
-  color: '#555',
-  lineHeight: 20,
-},
-scheduleToggle: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginVertical: 12,
-  paddingHorizontal: 10,
-  paddingVertical: 8,
-  top:-100,
-},
-switchLabel:{
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center',
-    marginLeft:30,
-    },
-
-});

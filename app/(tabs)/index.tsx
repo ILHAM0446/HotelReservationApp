@@ -5,18 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n from '../../i18n';
 import LanguageSelector from '../Components/LanguageSelector';
-
+import { useLanguage } from '../context/LanguageContext';
 
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation<any>();
-  const [, forceUpdate] = useState(false);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate((prev) => !prev);
-    }, 500);
-return () => clearInterval(interval);
-}, []);
+  const { locale } = useLanguage();
 
   return (
     <ImageBackground

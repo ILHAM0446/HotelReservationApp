@@ -5,32 +5,23 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n from '../../i18n';
 import LanguageSelector from '../Components/LanguageSelector';
+import { useLanguage } from '../Context/LanguageContext';
+import Header from '../Components/header';
+
 
 
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation<any>();
-  const [, forceUpdate] = useState(false);
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate((prev) => !prev);
-    }, 500);
-return () => clearInterval(interval);
-}, []);
-
+ useLanguage();
   return (
     <ImageBackground
       source={{ uri: 'https://bo.booking.lightresa.com/storage/images/ff211430-7c3f-11ed-8200-bb217364b5ad/20241111160522-et87d.jpg' }}
       style={styles.background}
       blurRadius={2}
     >
-        <View style={{ marginBottom: -15, top: -7, left: 10, }}>
-             <Image
-              source={{ uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png',}}
-              style={{ width: 100, height: 60, resizeMode: 'contain' }}
-              />
-        </View>
-    <LanguageSelector />
+
+    <Header />
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>{i18n.t('welcome')}</Text>
 

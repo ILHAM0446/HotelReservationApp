@@ -10,7 +10,7 @@ import { Calendar, Bus, Check } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
-import LanguageSelector from '../Components/LanguageSelector';
+import Header from '../Components/header';
 import CheckBox from '@react-native-community/checkbox';
 
 export default function TransportReservationForm() {
@@ -111,13 +111,7 @@ export default function TransportReservationForm() {
           >
             <SafeAreaView style={Formstyles.modalOverlay}>
               <ScrollView contentContainerStyle={Formstyles.scrollContainer}>
-             <View style={{ marginBottom: -15, top: -7, left: 10, }}>
-             <Image
-              source={{ uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png',}}
-              style={{ width: 100, height: 60, resizeMode: 'contain' }}
-              />
-        </View>
-                <LanguageSelector />
+             <Header />
 
                 <View style={Formstyles.formContainer}>
                   <View style={Formstyles.formHeader}>

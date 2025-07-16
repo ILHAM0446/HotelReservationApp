@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const Screenstyles = StyleSheet.create({
+const Screenstyles = StyleSheet.create({
    fakeModalWrapper: {
      position: 'absolute',
      top: 0,
@@ -8,29 +8,18 @@ export const Screenstyles = StyleSheet.create({
      left: 0,
      right: 0,
      zIndex: 10,
-     backgroundColor: 'rgba(255,255,255,0)', // utile pour cliquer derrière si nécessaire
+     backgroundColor: 'rgba(255,255,255,0)',
    },
 
   backgroundImage: {
     flex: 1,
-  },
-  logoWrapper: {
-    marginBottom: -15,
-    top: -7,
-    left: 10,
-    zIndex: 1,
-  },
-  logo: {
-    width: 100,
-    height: 60,
-    marginBottom: -45,
-    resizeMode: 'contain',
   },
   container: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
     paddingBottom: 40,
+    top: -40,
   },
   header: {
     alignItems: 'center',
@@ -51,7 +40,7 @@ export const Screenstyles = StyleSheet.create({
   },
   pricingCard: {
     flex: 1,
-    backgroundColor: '#f9b300',
+    backgroundColor: 'rgba(249, 179, 0, 0.85)',
     padding: 15,
     borderRadius: 12,
   },
@@ -203,3 +192,4 @@ export const Screenstyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+export default Screenstyles;

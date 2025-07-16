@@ -24,19 +24,13 @@ import useCapaciteMax from '../Components/useCapaciteMax';
 import { Screenstyles } from '../Components/Style';
 import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
-import LanguageSelector from '../Components/LanguageSelector';
+import Header from '../Components/header';
+import { checkCapacite } from '../api/PiscineAPI';
+import { useLanguage } from '../Context/LanguageContext';
 
 export default function PiscineScreen(): JSX.Element {
-  const navigation = useNavigation<any>();
-const [_, forceUpdate] = useState(false);
 
-React.useEffect(() => {
-  const interval = setInterval(() => {
-    forceUpdate((prev) => !prev);
-  }, 500);
-
-  return () => clearInterval(interval);
-}, []);
+ useLanguage();
 
 
   const [nom, setNom] = useState('');
@@ -71,10 +65,13 @@ React.useEffect(() => {
     ILHAM: { type: 'gratuit', valeur: 0 },
   };
 
-  const onChangeDate = (_event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (selectedDate) setDate(selectedDate);
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'set' && selectedDate) {
+      setDate(selectedDate);
+    }
     setShowDatePicker(false);
   };
+
 
   const validateEmail = (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -90,7 +87,7 @@ React.useEffect(() => {
     Price()
   );
 
-  const handleSubmit = (): void => {
+  const handleSubmit =async (): Promise<void> => {
     if (!nom || !prenom || !Email || !telephone || !date || !Adultes) {
       alert(i18n.t('error'));
       return;
@@ -99,10 +96,14 @@ React.useEffect(() => {
       alert(i18n.t('invalidEmail'));
       return;
     }
-    if (isCapaciteDepassee) {
-      alert(message);
+    const result = await checkCapacite(date, Adultes, Enfants, Bebes);
+    if (!result.ok) {
+      alert(result.message);
       return;
     }
+
+    console.log(result.data);
+
     setModalVisible(true);
   };
 
@@ -115,17 +116,15 @@ React.useEffect(() => {
           }}
           style={Screenstyles.backgroundImage}
         >
-          <TouchableOpacity style={Screenstyles.logoWrapper} onPress={() => navigation.navigate('index')}>
-            <Image source={{ uri: 'https://www.magichotelsandresorts.com/assets/images/png/logo.png' }} style={Screenstyles.logo} />
-          </TouchableOpacity>
-          <LanguageSelector />
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 , marginBottom: -50}}
-          >
+        <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 , marginBottom: -50}}
+                  >
+                  <Header />
+        <ScrollView contentContainerStyle={Screenstyles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={Screenstyles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+
               <View style={Screenstyles.header}>
                 <Text style={Screenstyles.pageTitle}>{i18n.t('reservationTitle')}</Text>
 
@@ -288,10 +287,13 @@ React.useEffect(() => {
 
                 <Button title={i18n.t('validate')} onPress={handleSubmit} />
               </View>
-            </ScrollView>
+
           </SafeAreaView>
-          </KeyboardAvoidingView>
+
+           </ScrollView>
+           </KeyboardAvoidingView>
         </ImageBackground>
+
        </View>
       )}
 

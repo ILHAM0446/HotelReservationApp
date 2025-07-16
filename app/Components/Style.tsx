@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const Screenstyles = StyleSheet.create({
+export const Screenstyles = StyleSheet.create({
    fakeModalWrapper: {
      position: 'absolute',
      top: 0,
@@ -192,7 +192,7 @@ const Screenstyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-export default Screenstyles;
+
 
 export const Formstyles = StyleSheet.create({
     fakeModalWrapper: {

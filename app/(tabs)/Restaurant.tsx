@@ -131,7 +131,7 @@ export default function restaurant () {
     setReservationDateTime(newDate);
     setShowTimePicker(false);
     };
-    console.log('timeSlots:', timeSlots);
+   // console.log('timeSlots:', timeSlots);
     const calculateStayDuration = (checkIn: Date, checkOut: Date) => {
             const diffTime = Math.abs(checkOut.getTime() - checkIn.getTime());
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Nombre de jours
@@ -141,11 +141,7 @@ export default function restaurant () {
    
 
 return (
-        <ImageBackground 
-            source={require('C:/Users/Imane/HotelReservationApp/assets/images/slider2.jpg')}
-            style={styles.background}
-            resizeMode="cover"
-        >
+
         <View style={styles.overlay}>
         <KeyboardAvoidingView behavior= {Platform.OS === "ios" ? "padding" : "height" } style = {{flex: 1}} >
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" >
@@ -367,7 +363,7 @@ return (
         </ScrollView>
        </KeyboardAvoidingView>
        </View>
-       </ImageBackground>
+
     );
 }
 

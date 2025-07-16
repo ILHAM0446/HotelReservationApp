@@ -3,7 +3,7 @@ export const fetchHoursByType = async (type) => {
     const response = await fetch(`https://transport.eureka-digital.ma/api/get_heure_by_type?type=${type}`);
     const json = await response.json();
 
-    console.log(json);
+
     if (json.status) {
 
       return json.data.map((item) => ({

@@ -136,20 +136,12 @@ export default function restaurant () {
             const diffTime = Math.abs(checkOut.getTime() - checkIn.getTime());
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Nombre de jours
             };
-
-
-
+    
+    
+   
 
 return (
-<<<<<<< HEAD
-        <ImageBackground
-            source={require('../../assets/images/slider2.jpg')}
-            style={styles.background}
-            resizeMode="cover"
-        >
-=======
 
->>>>>>> 45b4ef1dcfee96f4f8027e6c0c421cafe478be3d
         <View style={styles.overlay}>
         <KeyboardAvoidingView behavior= {Platform.OS === "ios" ? "padding" : "height" } style = {{flex: 1}} >
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" >
@@ -227,8 +219,8 @@ return (
             minimumDate={minCheckoutDate}
          />
          </View>
-
-
+         
+         
 {/* Champ de sélection date/heure */}
 {showReservationField && (
         <View style={styles.dateTimeField}>
@@ -270,7 +262,7 @@ return (
                 themeVariant="light"
             />
         )}
-
+    
 {/* TimePicker Modal */}
 {showTimePicker && (
     <View style={styles.timePickerModal}>
@@ -328,7 +320,7 @@ return (
 {showCakeSelection && (
     <View style={styles.cakeContainer}>
         <Text style={styles.sectionTitle}>Birthday Cake</Text>
-
+        
         <Text style={styles.label}>Number of people for the birthday cake</Text>
         <TextInput
             style={styles.numberInput}
@@ -338,7 +330,7 @@ return (
         />
 
         {cakes.map((cake) => (
-            <TouchableOpacity
+            <TouchableOpacity 
                 key={cake.id}
                 style={[
                     styles.cakeOption,

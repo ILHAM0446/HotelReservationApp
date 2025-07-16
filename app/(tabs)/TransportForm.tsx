@@ -13,7 +13,7 @@ import i18n from '../../i18n';
 import Header from '../Components/header';
 import CheckBox from '@react-native-community/checkbox';
 import LanguageSelector from '../Components/LanguageSelector';
-import { Formstyles } from '../Components/Style';
+
 import { fetchHoursByType, checkCapacity } from '../api/transportAPI';
 import { useLanguage } from '../context/LanguageContext';
 

@@ -8,8 +8,6 @@ import LanguageSelector from '../Components/LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
 import Header from '../Components/header';
 
-
-
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation<any>();
 

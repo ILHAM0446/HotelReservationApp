@@ -12,19 +12,13 @@ import CalculCodePromo from '../Components/CodePromo';
 import i18n from '../../i18n';
 import Header from '../Components/header';
 import CheckBox from '@react-native-community/checkbox';
+import LanguageSelector from '../Components/LanguageSelector';
+import { Formstyles } from '../Components/Style';
+import { fetchHoursByType, checkCapacity } from '../api/transportAPI';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function TransportReservationForm() {
-  const [_, forceUpdate] = useState(false);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate((prev) => !prev);
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-
+  const { language } = useLanguage();
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -41,15 +35,25 @@ export default function TransportReservationForm() {
   const [isVisible, setIsVisible] = useState(true);
   const [successMessageVisible, setSuccessMessageVisible] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [hoursOptions, setHoursOptions] = useState([]);
 
+  const formatDateForAPI = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   const ADULT_PRICE = 30;
   const CHILD_PRICE = 30;
 
   const calculateTotal = () =>
     (adults * ADULT_PRICE + children * CHILD_PRICE).toFixed(2);
 
-  const onChangeDate = (_event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (selectedDate) setDate(selectedDate);
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'set' && selectedDate) {
+      setDate(selectedDate);
+    }
     setShowDatePicker(false);
   };
 
@@ -68,27 +72,69 @@ export default function TransportReservationForm() {
 
   const lieux = [
     { label: i18n.t('choose'), value: 'choisir' },
-    { label: 'Aéroport', value: 'aeroport' },
-    { label: 'Gare', value: 'gare' },
-    { label: 'Centre-ville', value: 'centre_ville' },
-  ];
-
-  const time = [
-    { label: i18n.t('choose'), value: 'choisir' },
-    { label: '07:00 (30dh)', value: '7h' },
-    { label: '13:00 (20dh)', value: '13h' },
+    { label: 'Aqua Mirage', value: 'aqua' },
+    { label: 'Jamaa El Fna', value: 'jamaa' },
   ];
 
   const validateEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!lastName || !firstName || !email || !date || !validateEmail(email)) {
       alert(i18n.t('error'));
       return;
     }
-    setSuccessMessageVisible(true);
+
+    if (!departurePlace || !departureTime) {
+      alert(i18n.t('chooseDeparture'));
+      return;
+    }
+
+    try {
+      const formattedDate = formatDateForAPI(date);
+
+      const capacityResponse = await checkCapacity({
+        date: formattedDate,
+        heure: departureTime,
+        adults,
+        children,
+      });
+      console.log('Réponse complète de checkCapacity:', capacityResponse);
+
+
+      const { code, status, message } = capacityResponse;
+
+      if (code === 200 && status) {
+        setSuccessMessageVisible(true);
+      } else if (code === 400) {
+        Alert.alert('Capacité insuffisante', message || 'Aucune place disponible.');
+      } else if (code === 500) {
+        Alert.alert('Erreur serveur', message || 'Une erreur technique est survenue.');
+      } else {
+        Alert.alert('Erreur inconnue', 'Une erreur est survenue. Veuillez réessayer.');
+      }
+    } catch (error) {
+      Alert.alert('Erreur réseau', 'Impossible de contacter le serveur');
+    }
   };
+
+  const handleDeparturePlaceChange = async (selectedPlace) => {
+    setDeparturePlace(selectedPlace);
+    setDepartureTime('');
+
+    if (!selectedPlace || selectedPlace === 'choisir') {
+      setHoursOptions([]);
+      return;
+    }
+
+    try {
+      const options = await fetchHoursByType(selectedPlace);
+      setHoursOptions(options);
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de récupérer les horaires');
+    }
+  };
+
 
   return (
     <>
@@ -155,7 +201,7 @@ export default function TransportReservationForm() {
                   <Select
                     label={i18n.t('departurePlace')}
                     selectedValue={departurePlace}
-                    onValueChange={setDeparturePlace}
+                    onValueChange={handleDeparturePlaceChange}
                     items={lieux}
                   />
 
@@ -185,8 +231,9 @@ export default function TransportReservationForm() {
                     label={i18n.t('departureTime')}
                     selectedValue={departureTime}
                     onValueChange={setDepartureTime}
-                    items={time}
+                    items={hoursOptions}
                   />
+
               <View style={Formstyles.FlexContainer}>
                 <View style={Formstyles.inputField}>
                   <Input

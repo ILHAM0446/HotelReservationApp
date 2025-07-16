@@ -42,7 +42,7 @@ export default {
   departureDate: "Date Aller",
   departureTime: "Heure de départ",
   selectDate: "Sélectionner une date",
-  choose: "Choisir",
+  choose: "Choisir un lieu",
   maxLimitReached: "Le nombre maximum est 30",
   confirmedReservation: "Réservation confirmée",
   fieldName: "Nom",

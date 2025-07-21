@@ -13,7 +13,7 @@ export const fetchHoursByType = async (type) => {
             prix_adult: item.prix_adult,
           }
       }));
-      return [{ label: i18n.t('select'), value: '' ,data: { prix_adult: 0 } }, ...options];
+      return [{ label: i18n.t('select'), value: '' }, ...options];
     } else {
       throw new Error(json.message || i18n.t('ErrorInconnue'));
     }

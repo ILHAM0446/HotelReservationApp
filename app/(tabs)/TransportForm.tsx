@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import {View,Text,StyleSheet,Switch,ScrollView,Alert,TouchableOpacity,Platform,Modal,ImageBackground,SafeAreaView,KeyboardAvoidingView,Image,Pressable,Linking} from 'react-native';
+import {View,Text,StyleSheet,Switch,ScrollView,Alert,TouchableOpacity,Platform,Modal,ImageBackground,SafeAreaView,KeyboardAvoidingView,Image,Pressable} from 'react-native';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
 import Select from '../Components/Select';
@@ -147,9 +147,11 @@ export default function TransportReservationForm() {
     const handleTimeChange = (selectedHour) => {
       setDepartureTime(selectedHour);
       const selectedOption = hoursOptions.find((opt) => opt.value === selectedHour);
-      if (selectedOption) {
+      if (selectedOption && selectedOption.data && typeof selectedOption.data.prix_adult !== 'undefined') {
         setSelectedAdultPrice(Number(selectedOption.data.prix_adult));
         console.log('Prix adulte sélectionné:', selectedOption.data.prix_adult);
+      } else {
+        setSelectedAdultPrice(0);
       }
     };
 
@@ -257,7 +259,7 @@ export default function TransportReservationForm() {
             style={Formstyles.overlay}
           >
             <SafeAreaView style={Formstyles.Overlay}>
-              <ScrollView contentContainerStyle={Formstyles.scrollContainer}>
+              <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={Formstyles.scrollContainer} showsVerticalScrollIndicator={false}>
              <Header />
 
                 <View style={Formstyles.formContainer}>
@@ -409,7 +411,7 @@ export default function TransportReservationForm() {
                     </View>
                   )}
                       {promoMessage !== '' && (
-                        <Text style={{ color: promoStatus === 'success' ? '#7ac277' : 'red', marginTop: 5 }}>
+                        <Text style={{ color: promoStatus === 'success' ? '#7ac277' : 'red', margin:5,marginLeft:8,}}>
                           {promoMessage}
                         </Text>
                       )}

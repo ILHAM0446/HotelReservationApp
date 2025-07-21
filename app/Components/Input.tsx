@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 
-export default function Input({ label, value, onChangeText, placeholder, keyboardType = 'default' }) {
+export default function Input({ label, value, onChangeText, placeholder, keyboardType = 'default', onBlur }) {
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -12,6 +12,7 @@ export default function Input({ label, value, onChangeText, placeholder, keyboar
         placeholder={placeholder}
         placeholderTextColor="#aaa"
         keyboardType={keyboardType}
+        onBlur={onBlur}
       />
     </View>
   );

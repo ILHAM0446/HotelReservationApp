@@ -18,7 +18,7 @@ export const Screenstyles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 10,
     top: -40,
   },
   header: {
@@ -33,43 +33,47 @@ export const Screenstyles = StyleSheet.create({
     textAlign: 'center',
     top: -10,
   },
-  pricingSection: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  pricingCard: {
-    flex: 1,
-    backgroundColor: 'rgba(249, 179, 0, 0.85)',
-    padding: 15,
-    borderRadius: 12,
-  },
-  pricingTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
+   pricingSection: {
+     flexDirection: 'row',
+     gap: 10,
+     marginBottom: 20,
+   },
+   pricingCard: {
+     flex: 1,
+     backgroundColor: 'rgba(249, 179, 0, 0.85)',
+     padding: 15,
+     borderRadius: 12,
+   },
+   pricingTitle: {
+     fontSize: 14,
+     fontWeight: 'bold',
+     color: 'white',
+     marginBottom: 10,
+     textAlign: 'center',
+   },
   pricingRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 5,
   },
   pricingLabel: {
     fontSize: 12,
     color: 'white',
     fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
   },
   pricingPrice: {
     fontSize: 14,
     color: 'white',
     fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
   },
+separator: {
+  height: 1,
+  backgroundColor: 'white',
+  opacity: 0.4,
+  marginVertical: 5,
+},
+
   dropdownLabel: {
     fontSize: 14,
     color: '#666',
@@ -86,7 +90,7 @@ export const Screenstyles = StyleSheet.create({
   TitleForm: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1e40af',
+    color: '#007AFF',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -115,14 +119,14 @@ export const Screenstyles = StyleSheet.create({
     borderRadius: 8,
   },
   radioSelected: {
-    backgroundColor: '#e0f2fe',
+    backgroundColor: 'rgba(255, 255, 255, 0)',
   },
   radioButton: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#1e40af',
+    borderColor: '#007AFF',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
@@ -133,7 +137,7 @@ export const Screenstyles = StyleSheet.create({
   },
   radioInnerSelected: {
     borderRadius: 5,
-    backgroundColor: '#1e40af',
+    backgroundColor: '#007AFF',
   },
   section: {
     marginBottom: 10,
@@ -144,6 +148,19 @@ export const Screenstyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
   },
+  ButtonCodePromo:{
+    marginLeft: 8,
+    backgroundColor: '#FFC800',
+    borderRadius: 24,
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: -20,},
   priceSection: {
     marginTop: 0.5,
     marginBottom: 20,
@@ -162,37 +179,110 @@ export const Screenstyles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#92400e',
   },
-  modalBackground: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 30,
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 25,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#10b981',
-  },
-  modalButton: {
-    marginTop: 20,
-    backgroundColor: '#f9b300',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-  },
-  modalButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-});
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+modalCard: {
+  width: '90%',
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  padding: 20,
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+  elevation: 5,
+},
+iconCircle: {
+  backgroundColor: '#d4edda',
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 10,
+},
+successIcon: {
+  fontSize: 28,
+},
+modalTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  textAlign: 'center',
+  marginBottom: 5,
+},
+modalSubtitle: {
+  fontSize: 14,
+  color: '#555',
+  textAlign: 'center',
+  marginBottom: 15,
+},
+infoBox: {
+  width: '100%',
+  backgroundColor: '#f9f9f9',
+  borderRadius: 8,
+  paddingVertical: 10,
+  marginBottom: 20,
+},
+row: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingVertical: 8,
+  paddingHorizontal: 15,
+},
+label: {
+  fontSize: 14,
+  color: '#333',
+},
+value: {
+  fontSize: 14,
+  color: '#000',
+  fontWeight: '500',
+},
+labelBold: {
+  fontSize: 15,
+  fontWeight: 'bold',
+  color: '#000',
+},
+valueBold: {
+  fontSize: 15,
+  fontWeight: 'bold',
+  color: '#000',
+},
+divider: {
+  height: 1,
+  backgroundColor: '#ddd',
+  marginHorizontal: 15,
+},
+confirmationNote: {
+  fontSize: 13,
+  textAlign: 'center',
+  color: '#777',
+  marginBottom: 15,
+},
+ctaButton: {
+  backgroundColor: '#ffc107',
+  paddingVertical: 12,
+  paddingHorizontal: 60,
+  borderRadius: 30,
+  marginBottom: 10,
+},
+ctaButtonText: {
+  fontSize: 15,
+  fontWeight: 'bold',
+  color: '#fff',
+},
+paymentNote: {
+  fontSize: 12,
+  color: '#666',
+  textAlign: 'center',
+},
 
+});
 
 export const Formstyles = StyleSheet.create({
     fakeModalWrapper: {

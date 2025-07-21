@@ -324,7 +324,7 @@ export const Formstyles = StyleSheet.create({
       width: '100%',
       height: '100%',
     },
-    modalOverlay: {
+    Overlay: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.2)',
       justifyContent: 'center',
@@ -353,7 +353,7 @@ export const Formstyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-    titleSection: {
+  titleSection: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -386,12 +386,12 @@ export const Formstyles = StyleSheet.create({
 
   totalContainer: {
     flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingVertical: 15,
-      backgroundColor: '#FEF3C7',
-      paddingHorizontal: 15,
-      borderRadius: 8,
-      marginTop: 10,
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginTop: 10,
   },
   totalLabel: {
     fontSize: 18,
@@ -400,8 +400,8 @@ export const Formstyles = StyleSheet.create({
   },
   totalPrice: {
     fontSize: 18,
-      fontWeight: 'bold',
-      color: '#92400e',
+    fontWeight: 'bold',
+    color: '#92400e',
   },
   inputField: {
     flex: 1,
@@ -421,104 +421,7 @@ export const Formstyles = StyleSheet.create({
     color: '#666',
     fontWeight: '500',
   },
-  successOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
 
-    successContainer: {
-      backgroundColor: 'white',
-      borderRadius: 20,
-      padding: 25,
-      width: '100%',
-      maxWidth: 400,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 10,
-      elevation: 5,
-    },
-
-    successHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#e5e7eb',
-      paddingBottom: 15,
-    },
-
-    successIcon: {
-      backgroundColor: '#f9b300',
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 10,
-    },
-
-    successTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: '#1f2937',
-    },
-
-    successContent: {
-      marginVertical: 1,
-    },
-
-    successRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 5,
-    },
-
-    successLabel: {
-      fontSize: 15,
-      color: '#6b7280',
-      fontWeight: '500',
-      flex: 1,
-    },
-
-    successValue: {
-      fontSize: 15,
-      color: '#1f2937',
-      fontWeight: '600',
-      flex: 1,
-      textAlign: 'right',
-    },
-
-    successTotal: {
-      marginTop: 15,
-      paddingTop: 15,
-      borderTopWidth: 1,
-      borderTopColor: '#e5e7eb',
-    },
-
-    successTotalText: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#1e40af',
-      textAlign: 'center',
-    },
-
-    closeButton: {
-      marginTop: 13,
-      backgroundColor: '#1e40af',
-      borderRadius: 10,
-      paddingVertical: 12,
-      alignItems: 'center',
-    },
-
-    closeButtonText: {
-      color: 'white',
-      fontWeight: '600',
-      fontSize: 16,
-    },
 scheduleContainer: {
   backgroundColor: 'rgba(255, 255, 255, 0.90)',
   borderRadius: 10,
@@ -569,5 +472,132 @@ switchLabel:{
     textAlign: 'center',
     marginLeft:30,
     },
+promoButton:{marginLeft: 8,
+      backgroundColor: '#FFC800',
+       borderRadius: 24,
+       width: 48,
+       height: 48,
+       alignItems: 'center',
+       justifyContent: 'center',
+       shadowColor: '#000',
+       shadowOpacity: 0.15,
+       shadowRadius: 4,
+       elevation: 3,
+       marginBottom:-18,
+       },
+   paymentButton: {
+     backgroundColor: '#1e40af',
+     padding: 12,
+     borderRadius: 8,
+     marginTop: 20,
+     alignItems: 'center',
+   },
+   paymentButtonText: {
+     color: 'white',
+     fontWeight: 'bold',
+     fontSize: 16,
+   },
+   modalOverlay: {
+     flex: 1,
+     backgroundColor: 'rgba(0,0,0,0.4)',
+     justifyContent: 'center',
+     alignItems: 'center',
+   },
+   modalCard: {
+     width: '90%',
+     backgroundColor: '#fff',
+     borderRadius: 12,
+     padding: 20,
+     alignItems: 'center',
+     shadowColor: '#000',
+     shadowOffset: { width: 0, height: 2 },
+     shadowOpacity: 0.2,
+     shadowRadius: 4,
+     elevation: 5,
+   },
+   iconCircle: {
+     backgroundColor: '#d4edda',
+     width: 60,
+     height: 60,
+     borderRadius: 30,
+     justifyContent: 'center',
+     alignItems: 'center',
+     marginBottom: 10,
+   },
+   successIcon: {
+     fontSize: 28,
+   },
+   modalTitle: {
+     fontSize: 20,
+     fontWeight: 'bold',
+     textAlign: 'center',
+     marginBottom: 5,
+   },
+   modalSubtitle: {
+     fontSize: 14,
+     color: '#555',
+     textAlign: 'center',
+     marginBottom: 15,
+   },
+   infoBox: {
+     width: '100%',
+     backgroundColor: '#f9f9f9',
+     borderRadius: 8,
+     paddingVertical: 10,
+     marginBottom: 20,
+   },
+   row: {
+     flexDirection: 'row',
+     justifyContent: 'space-between',
+     paddingVertical: 8,
+     paddingHorizontal: 15,
+   },
+   label: {
+     fontSize: 14,
+     color: '#333',
+   },
+   value: {
+     fontSize: 14,
+     color: '#000',
+     fontWeight: '500',
+   },
+   labelBold: {
+     fontSize: 15,
+     fontWeight: 'bold',
+     color: '#000',
+   },
+   valueBold: {
+     fontSize: 15,
+     fontWeight: 'bold',
+     color: '#000',
+   },
+   divider: {
+     height: 1,
+     backgroundColor: '#ddd',
+     marginHorizontal: 15,
+   },
+   confirmationNote: {
+     fontSize: 13,
+     textAlign: 'center',
+     color: '#777',
+     marginBottom: 15,
+   },
+   ctaButton: {
+     backgroundColor: '#ffc107',
+     paddingVertical: 12,
+     paddingHorizontal: 60,
+     borderRadius: 30,
+     marginBottom: 10,
+   },
+   ctaButtonText: {
+     fontSize: 15,
+     fontWeight: 'bold',
+     color: '#fff',
+   },
+   paymentNote: {
+     fontSize: 12,
+     color: '#666',
+     textAlign: 'center',
+   },
 
 });

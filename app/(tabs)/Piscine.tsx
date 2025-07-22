@@ -532,27 +532,27 @@ export default function PiscineScreen(): JSX.Element {
             <Text style={Screenstyles.modalSubtitle}>{i18n.t('Thanks')}</Text>
             <View style={Screenstyles.infoBox}>
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('NomComplet')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('NomComplet')}:</Text>
                 <Text style={Screenstyles.value}>{prenom} {nom}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('email')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('email')}:</Text>
                 <Text style={Screenstyles.value}>{Email}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('date')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('date')}:</Text>
                 <Text style={Screenstyles.value}>{date.toLocaleDateString()}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('Reference')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('Reference')}:</Text>
                 <Text style={Screenstyles.value}>{reference}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.labelBold}>{i18n.t('totalPrice')}</Text>
+                <Text style={Screenstyles.labelBold}>{i18n.t('totalPrice')}:</Text>
                 <Text style={Screenstyles.valueBold}>{statutcode ? `${FinalPrice} DH` : `${Price()} DH`}</Text>
               </View>
             </View>

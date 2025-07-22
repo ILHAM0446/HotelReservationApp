@@ -22,10 +22,10 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   label: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: '#333',
     marginBottom: 8,
-    fontWeight:'500',
+    fontWeight:'600',
   },
   input: {
     backgroundColor: '#fff',

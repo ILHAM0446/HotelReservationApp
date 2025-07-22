@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import {View,Text,StyleSheet,Switch,ScrollView,Alert,TouchableOpacity,Platform,Modal,ImageBackground,SafeAreaView,KeyboardAvoidingView,Image,Pressable} from 'react-native';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
-import Select from '../Components/Select';
+import Select from '../Components/Select'; // Assurez-vous que ce Select est bien celui modifié
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { styles as inputStyles } from '../Components/Input';
@@ -49,6 +49,24 @@ export default function TransportReservationForm() {
   const [paymentPayload, setPaymentPayload] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState('');
 
+  // Nouveaux états pour la validation des champs
+  const [lastNameTouched, setLastNameTouched] = useState(false);
+  const [lastNameError, setLastNameError] = useState('');
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [firstNameError, setFirstNameError] = useState('');
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [reservationCodeTouched, setReservationCodeTouched] = useState(false);
+  const [reservationCodeError, setReservationCodeError] = useState('');
+  const [adultsTouched, setAdultsTouched] = useState(false);
+  const [adultsError, setAdultsError] = useState('');
+  const [childrenTouched, setChildrenTouched] = useState(false);
+  const [departurePlaceTouched, setDeparturePlaceTouched] = useState(false); // Nouveau
+  const [departurePlaceError, setDeparturePlaceError] = useState(''); // Nouveau
+  const [departureTimeTouched, setDepartureTimeTouched] = useState(false); // Nouveau
+  const [departureTimeError, setDepartureTimeError] = useState(''); // Nouveau
+  const [formSubmitted, setFormSubmitted] = useState(false); // Similaire à isvalide
+
   const resetForm = () => {
     setLastName('');
     setFirstName('');
@@ -72,6 +90,15 @@ export default function TransportReservationForm() {
     setPaymentPayload(null);
     setPaymentStatus('');
     setSuccessMessageVisible(false);
+
+    // Réinitialisation des états de validation
+    setLastNameTouched(false); setLastNameError('');
+    setFirstNameTouched(false); setFirstNameError('');
+    setEmailTouched(false); setEmailError('');
+    setAdultsTouched(false); setAdultsError('');
+    setDeparturePlaceTouched(false); setDeparturePlaceError(''); // Nouveau
+    setDepartureTimeTouched(false); setDepartureTimeError(''); // Nouveau
+    setFormSubmitted(false);
   };
   useEffect(() => {
     resetForm();
@@ -191,18 +218,51 @@ export default function TransportReservationForm() {
     }, []);
 
   const handleSubmit = async () => {
-    if (!lastName || !firstName || !date || !departurePlace || !departureTime) {
-      alert(i18n.t('error'));
-      return;
+    setFormSubmitted(true); // Déclenche l'affichage des styles de validation
+
+    let formIsValid = true;
+
+    // Validation lastName
+    setLastNameTouched(true);
+    if (!lastName) { setLastNameError(' '); formIsValid = false; } else { setLastNameError(''); }
+
+    // Validation firstName
+    setFirstNameTouched(true);
+    if (!firstName) { setFirstNameError(' '); formIsValid = false; } else { setFirstNameError(''); }
+
+    // Validation email
+    setEmailTouched(true);
+    if (!email || !validateEmail(email)) { setEmailError(i18n.t('invalidEmail')); formIsValid = false; } else { setEmailError(''); }
+    setReservationCodeTouched(true);
+    if (!reservationCode) { setReservationCodeError(' '); formIsValid = false; } else { setReservationCodeError(''); }
+
+    // Validation adults
+    setAdultsTouched(true);
+    if (Number(adults) < 1 || isNaN(Number(adults))) { setAdultsError(' '); formIsValid = false; } else { setAdultsError(''); }
+    setChildrenTouched(true);
+
+    // Validation departurePlace (Select)
+    setDeparturePlaceTouched(true);
+    if (!departurePlace || departurePlace === 'choisir') {
+      setDeparturePlaceError(' ');
+      formIsValid = false;
+    } else {
+      setDeparturePlaceError('');
     }
-    if (!validateEmail(email)) {
-      alert(i18n.t('invalidEmail'));
-      return;
+
+    // Validation departureTime (Select)
+    setDepartureTimeTouched(true);
+    if (!departureTime) {
+      setDepartureTimeError(' ');
+      formIsValid = false;
+    } else {
+      setDepartureTimeError('');
     }
-    if (!adults || Number(adults) === 0) {
-      Alert.alert('Erreur', i18n.t('missedAdultNumber'));
-      return;
+
+    if (!formIsValid) {
+      return; // Arrête la soumission si une validation échoue
     }
+
     const formattedTime = departureTime.includes(':')
       ? `${departureTime}:00`
       : `${departureTime.slice(0, 2)}:${departureTime.slice(2)}:00`;
@@ -274,13 +334,39 @@ export default function TransportReservationForm() {
 
                   <View style={Formstyles.FlexContainer}>
                     <View style={Formstyles.inputField}>
-                      <Input label={i18n.t('name')} value={lastName} onChangeText={setLastName} />
+                      <Input
+                        label={i18n.t('name')}
+                        value={lastName}
+                        onChangeText={(text) => {
+                          setLastName(text);
+                          setLastNameTouched(true);
+                          setLastNameError(text ? '' : ' ');
+                        }}
+                        onBlur={() => {
+                          setLastNameTouched(true);
+                          setLastNameError(lastName ? '' : ' ');
+                        }}
+                        touched={lastNameTouched}
+                        isvalide={formSubmitted}
+                        error={lastNameError}
+                      />
                     </View>
                     <View style={Formstyles.inputField}>
                       <Input
                         label={i18n.t('firstName')}
                         value={firstName}
-                        onChangeText={setFirstName}
+                        onChangeText={(text) => {
+                          setFirstName(text);
+                          setFirstNameTouched(true);
+                          setFirstNameError(text ? '' : ' ');
+                        }}
+                        onBlur={() => {
+                          setFirstNameTouched(true);
+                          setFirstNameError(firstName ? '' : ' ');
+                        }}
+                        touched={firstNameTouched}
+                        isvalide={formSubmitted}
+                        error={firstNameError}
                       />
                     </View>
                   </View>
@@ -289,7 +375,19 @@ export default function TransportReservationForm() {
                   <Input
                     label={i18n.t('email')}
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      setEmailTouched(true);
+                      setEmailError(validateEmail(text) ? '' : i18n.t('invalidEmail'));
+                    }}
+                    placeholder={i18n.t('placeholderEmail')}
+                    onBlur={() => {
+                      setEmailTouched(true);
+                      setEmailError(validateEmail(email) ? '' : i18n.t('invalidEmail'));
+                    }}
+                    touched={emailTouched}
+                    isvalide={formSubmitted}
+                    error={emailError}
                     keyboardType="email-address"
                   />
                  </View>
@@ -297,15 +395,30 @@ export default function TransportReservationForm() {
                   <Input
                     label={i18n.t('reservationCode')}
                     value={reservationCode}
-                    onChangeText={setReservationCode}
+                    onChangeText={text => {
+                        setReservationCode(text);
+                        setReservationCodeTouched(true);
+                        setReservationCodeError(text ? '' : ' ');}}
+                     onBlur={() => {setReservationCodeTouched(true);
+                         setReservationCodeError(reservationCode ? '' : ' ');}}
+                   touched={reservationCodeTouched}
+                   isvalide={formSubmitted}
+                   error={reservationCodeError}
                   />
                 </View>
                </View>
                   <Select
                     label={i18n.t('departurePlace')}
                     selectedValue={departurePlace}
-                    onValueChange={handleDeparturePlaceChange}
+                    onValueChange={(value) => {
+                      handleDeparturePlaceChange(value);
+                      setDeparturePlaceTouched(true);
+                      setDeparturePlaceError(value && value !== 'choisir' ? '' : ' ');
+                    }}
                     items={lieux}
+                    touched={departurePlaceTouched}
+                    isvalide={formSubmitted}
+                    error={departurePlaceError}
                   />
 
                   <View style={[inputStyles.inputContainer, { marginBottom: 10 }]}>
@@ -334,8 +447,15 @@ export default function TransportReservationForm() {
                   <Select
                     label={i18n.t('departureTime')}
                     selectedValue={departureTime}
-                    onValueChange={handleTimeChange}
+                    onValueChange={(value) => {
+                      handleTimeChange(value);
+                      setDepartureTimeTouched(true);
+                      setDepartureTimeError(value ? '' : ' ');
+                    }}
                     items={hoursOptions}
+                    touched={departureTimeTouched}
+                    isvalide={formSubmitted}
+                    error={departureTimeError}
                   />
 
               <View style={Formstyles.FlexContainer}>
@@ -344,13 +464,18 @@ export default function TransportReservationForm() {
                     label={i18n.t('adults')}
                     value={String(adults)}
                     onChangeText={text => {
-                      if (text === '') {
-                        setAdults('');
-                        return;
-                      }
                       const num = Number(text);
                       setAdults(num);
+                      setAdultsTouched(true);
+                      setAdultsError(num < 1 || isNaN(num) ? ' ' : '');
                     }}
+                    onBlur={() => {
+                      setAdultsTouched(true);
+                      setAdultsError(adults < 1 || isNaN(adults) ? ' ' : '');
+                    }}
+                    touched={adultsTouched}
+                    isvalide={formSubmitted}
+                    error={adultsError}
                     keyboardType="numeric"
                   />
                   </View>
@@ -360,8 +485,15 @@ export default function TransportReservationForm() {
                     value={children === 0 ? '0' : String(children)}
                     onChangeText={text => {
                       setChildren(text === '' ? '' : Number(text));
+                      setChildrenTouched(true);
                     }}
+                    onBlur={() => {
+                      setChildrenTouched(true);
+                    }}
+                    touched={childrenTouched}
+                    isvalide={formSubmitted}
                     keyboardType="numeric"
+
                   />
                   </View>
                  </View>
@@ -399,6 +531,7 @@ export default function TransportReservationForm() {
                         value={promoCode}
                         onChangeText={handlePromoCodeChange}
                         placeholder="Code"
+                        // Ajoutez ici les props touched, isvalide, error si vous voulez valider ce champ
                       />
                       </View>
                       <TouchableOpacity

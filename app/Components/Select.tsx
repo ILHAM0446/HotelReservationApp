@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from 'react-native';
-import { ChevronDown, Check } from 'lucide-react-native';
+import { ChevronDown, Check, AlertCircle } from 'lucide-react-native';
 import i18n from '../../i18n';
 
 interface SelectItem {
@@ -16,6 +16,8 @@ interface SelectProps {
   items: SelectItem[];
   disabled?: boolean;
   error?: string;
+  touched?: boolean;
+  isvalide?: boolean;
 }
 
 export default function Select({
@@ -23,47 +25,62 @@ export default function Select({
   selectedValue,
   onValueChange,
   items,
-  placeholder = i18n.t('select'),
   disabled = false,
   error,
+  touched,
+  isvalide,
 }: SelectProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   const selectedItem = items.find(item => item.value === selectedValue);
-  const displayValue = selectedItem?.label || placeholder;
+  const displayValue = selectedItem?.label;
 
-  const handleSelect = (value: string) => {
-    onValueChange(value);
-    setIsVisible(false);
-  };
+  // Détermine la couleur de la bordure selon l'état
+  let borderColor = '#ddd';
+  if (touched && isvalide) {
+    if (error) borderColor = '#D32F2F';
+    else borderColor = '#4CAF50';
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-
-      <TouchableOpacity
-        style={[
-          styles.selector,
-          error && styles.selectorError,
-          disabled && styles.selectorDisabled,
-        ]}
-        onPress={() => !disabled && setIsVisible(true)}
-        disabled={disabled}
-      >
-        <Text style={[
-          styles.selectorText,
-          !selectedItem && styles.placeholderText,
-          disabled && styles.disabledText,
-        ]}>
-          {displayValue}
-        </Text>
-        <ChevronDown
-          size={20}
-          color={disabled ? '#9ca3af' : '#6b7280'}
-        />
-      </TouchableOpacity>
-
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      <View style={{ position: 'relative' }}>
+        <TouchableOpacity
+          style={[
+            styles.selector,
+            { borderColor },
+            error && styles.selectorError,
+            disabled && styles.selectorDisabled,
+          ]}
+          onPress={() => !disabled && setIsVisible(true)}
+          disabled={disabled}
+        >
+          <Text style={[
+            styles.selectorText,
+            !selectedItem && styles.placeholderText,
+            disabled && styles.disabledText,
+          ]}>
+            {displayValue}
+          </Text>
+          <ChevronDown
+            size={20}
+            color={disabled ? '#9ca3af' : '#6b7280'}
+          />
+          {touched && isvalide && (
+            <>
+              {error ? (
+                <AlertCircle color="red" size={20} style={{ position: 'absolute', right: 10, top: 14 }} />
+              ) : (
+                <Check color="green" size={20} style={{ position: 'absolute', right: 10, top: 14 }} />
+              )}
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
+      {touched && !!error && isvalide && error !== ' ' && (
+        <Text style={styles.errorText}>{error}</Text>
+      )}
 
       <Modal
         visible={isVisible}
@@ -91,7 +108,10 @@ export default function Select({
                     styles.option,
                     item.value === selectedValue && styles.selectedOption,
                   ]}
-                  onPress={() => handleSelect(item.value)}
+                  onPress={() => {
+                    onValueChange(item.value);
+                    setIsVisible(false);
+                  }}
                 >
                   <Text style={[
                     styles.optionText,
@@ -148,7 +168,7 @@ const styles = StyleSheet.create({
   },
   selectorText: {
     fontSize: 16,
-    color: '#333',
+    color: '#111827',
     flex: 1,
   },
   placeholderText: {

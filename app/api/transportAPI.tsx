@@ -3,9 +3,9 @@ export const fetchHoursByType = async (type) => {
   try {
     const response = await fetch(`https://transport.eureka-digital.ma/api/get_heure_by_type?type=${type}`);
     const json = await response.json();
-    console.log(json);
+    //console.log(json);
 
-    if (json.status) {
+    if (json.status && json.data) {
       const options = json.data.map((item) => ({
         label: `${item.hour} (${item.prix_adult} DH)`,
         value: item.hour,
@@ -13,7 +13,7 @@ export const fetchHoursByType = async (type) => {
             prix_adult: item.prix_adult,
           }
       }));
-      return [{ label: i18n.t('select'), value: '' }, ...options];
+      return [{ label: i18n.t('select'), value: '', data: {} }, ...options];
     } else {
       throw new Error(json.message || i18n.t('ErrorInconnue'));
     }
@@ -34,7 +34,7 @@ export const checkPromoCode = async (code) => {
           body: JSON.stringify({ code: code,}),
         });
     const json = await response.json();
-    console.log(json);
+    //console.log(json);
 
     if (json.code === 200 && json.status) {
       return {
@@ -56,7 +56,7 @@ export const checkPromoCode = async (code) => {
       };
     }
   } catch (error) {
-      console.log('Erreur API checkPromoCode:', error);
+      //console.log('Erreur API checkPromoCode:', error);
     return {
       success: false,
       data: null,
@@ -82,7 +82,7 @@ export const checkCapacity = async ({ date, heure, adults, children }) => {
     });
 
     const json = await response.json();
-    console.log(json);
+    //console.log(json);
     return json;
   } catch (error) {
     console.error('Erreur dans checkCapacity:', error);
@@ -114,9 +114,9 @@ export const checkReservation = async ({departureDate,departureTime,adults,child
         },
         body: JSON.stringify(body),
         });
-    console.log(body);
+    //console.log(body);
     const json = await response.json();
-        console.log('checkReservation:', json);
+        //console.log('checkReservation:', json);
         if (json.status === true) {
             if (json.payment_status==='PENDING'){
                 return {

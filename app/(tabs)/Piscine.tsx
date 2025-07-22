@@ -166,16 +166,18 @@ export default function PiscineScreen(): JSX.Element {
   );
 
   React.useEffect(() => {
-    const verifierCapacite = async () => {
+    const timer = setTimeout(async () => {
       const result = await checkCapacite(date, Adultes, Enfants, Bebes);
       if (!result.ok) {
         setMessageCapacite(result.message);
       } else {
         setMessageCapacite('');
       }
-    };
-    verifierCapacite();
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [date, Adultes, Enfants, Bebes]);
+
 
   const handleReservation = async () => {
     const payload = {

@@ -1,25 +1,26 @@
-// version 5
+// version 7
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { AlertCircle, Check, } from 'lucide-react-native';
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Button from "../Components/Button";
 import Input from "../Components/Input";
-//import { styles } from '../Components/Mystyle';
+import { styles } from '../Components/Mystyle';
 import Select from "../Components/Select";
 
 
 
 export default function restaurant () {
-    const [ LastName , setLastName] = useState('');
-    const [ FirstName , setFirstName] = useState('');
-    const [ Email , setEmail] = useState('');
-    const [ Source , setSource] = useState('');
-    const [ReservationNumber, setReservationNumber] = useState('');
-    const [ RoomNumber , setRoomNumber] = useState('');
+    const [ lastName , setLastName] = useState('');
+    const [ firstName , setFirstName] = useState('');
+    const [ email , setEmail] = useState('');
+    const [ source , setSource] = useState('');
+    const [reservationNumber, setReservationNumber] = useState('');
+    const [ roomNumber , setRoomNumber] = useState('');
     const [showPicker, setShowPicker] = useState(false);
-    const [ CheckIn, setCheckIn] = useState<Date>(new Date());
-    const [ CheckOut , setCheckOut] = useState<Date>(() => {
+    const [ checkIn, setCheckIn] = useState<Date>(new Date());
+    const [ checkOut , setCheckOut] = useState<Date>(() => {
             const nextDay = new Date();
             nextDay.setDate(nextDay.getDate()+1 );
             return nextDay ;
@@ -44,9 +45,6 @@ export default function restaurant () {
     const [steakHouseChildren, setSteakHouseChildren] = useState(0);
     const [marocainPeople, setMarocainPeople] = useState(0);
     const [italienPeople, setItalienPeople] = useState(0);
-    const [steakHouseMenus, setSteakHouseMenus] = useState<{person: number, name: string, menu: string}[]>([]);
-    const [marocainMenus, setMarocainMenus] = useState<{person: number, name: string, menu: string}[]>([]);
-    const [italienMenus, setItalienMenus] = useState<{person: number, name: string, menu: string}[]>([]);
     const [restaurantMenus, setRestaurantMenus] = useState<RestaurantMenu[]>([]);
     const [personMenus, setPersonMenus] = useState<{ [restaurantName: string]: PersonMenu[] }>({});
     const [showCakeSelection, setShowCakeSelection] = useState(false);
@@ -57,13 +55,30 @@ export default function restaurant () {
         { id: 2, name: "Gâteau2", price: 100, image: require('../assets/images/cake2.png') },
         { id: 3, name: "Gâteau3", price: 3936, image: require('../assets/images/cake3.png') }
     ];
-    const [totalPrice, setTotalPrice] = useState(0);
     const [promoCode, setPromoCode] = useState('');
     const [isPromoValid, setIsPromoValid] = useState<boolean | null>(null);
-    const [statutCode, setStatutCode] = useState<'valid' | 'invalid' | null>(null);
     const [finalPrice, setFinalPrice] = useState(0);
     const [comment, setComment] = useState('');
     const [showCommentField, setShowCommentField] = useState(false);
+    const[isvalide , setIsvalide] = useState(false);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
+
+    // États de validation pour chaque champ
+    const [lastNameTouched, setLastNameTouched ] = useState(false);
+    const [lastNameError , setLastNameError]= useState('');
+    const [firstNameTouched, setFirstNameTouched] = useState(false);
+    const [firstNameError, setFirstNameError]= useState('');
+    const [emailTouched, setEmailTouched] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [reservationNumberTouched, setReservationNumberTouched] = useState(false);
+    const [reservationNumberError, setReservationNumberError] = useState('');
+    const [roomNumberTouched, setRoomNumberTouched] = useState(false);
+    const [roomNumberError, setRoomNumberError] = useState('');
+    const [numberOfPeopleError, setNumberOfPeopleError] = useState('');
+    const [numberOfPeopleTouched, setNumberOfPeopleTouched] = useState(false);
+    const [menuErrors, setMenuErrors] = useState<Record<string, { nameError?: string; menuError?: string }>>({});
+    const [hasSubmittedMenus, setHasSubmittedMenus] = useState(false);
+
 
 
 
@@ -201,14 +216,74 @@ const DataCode = {
 
 
     const handleForm = () => {
-        console.log('last_name:', LastName );
-        console.log('first_name:', FirstName);
-        console.log('email:', Email);
-        console.log('source:', Source);
-        console.log('reservation_number:', ReservationNumber);
-        console.log('room_number:', RoomNumber);
-        console.log('check_in:', CheckIn);
-        console.log('check_out', CheckOut);
+        setIsvalide(true);
+        let formIsValide = true;
+
+        setLastNameTouched(true);
+            if (!lastName){setLastNameError(' ') ; formIsValide= false;} else { setLastNameError(''); }
+        setFirstNameTouched(true);
+            if (!firstName){setFirstNameError(' '); formIsValide= false; } else { setFirstNameError('');}
+        setHasSubmitted(true);
+          if (!email) {
+            setEmailError("Email requis");
+            formIsValide = false;
+          } else if (!emailRegex.test(email)) {
+            setEmailError("Adresse email invalide");
+            formIsValide = false;
+          } else {
+            setEmailError("");
+          }
+        setReservationNumberTouched(true);
+            if (!reservationNumber) {setReservationNumberError(' ');formIsValide = false;} else {setReservationNumberError('');}
+        setRoomNumberTouched(true);if (!roomNumber) {setRoomNumberError(' ');formIsValide = false;} else {setRoomNumberError('');}
+        setNumberOfPeopleTouched(true);
+            if (selectedCake !== null && (!numberOfPeople || numberOfPeople <= 0)) {
+            setNumberOfPeopleError(' ');
+            formIsValide = false;
+            } else {
+               setNumberOfPeopleError('');
+            }
+        // validation des menus des personnes
+
+        setHasSubmittedMenus(true);
+          let newErrors: typeof menuErrors = {};
+
+          restaurantMenus.forEach((menu) => {
+            const people = personMenus[menu.name] || [];
+
+            people.forEach((person) => {
+              const personKey = `${menu.name}-${person.person}`;
+              const isNameEmpty = person.name.trim() === '';
+
+              const allNone = Object.values(person.menu).every(
+                (item) => item === '' || item === 'none'
+              );
+
+              newErrors[personKey] = {
+                nameError: isNameEmpty ? '-Name is required' : '',
+                menuError: allNone ? '-Select at least one dish (not all None)' : '',
+              };
+            });
+          });
+
+          setMenuErrors(newErrors);
+
+          // Vérifie si le formulaire est valide globalement
+          const formIsValid = Object.values(newErrors).every(
+            (e) => !e.nameError && !e.menuError
+          );
+
+
+
+
+        console.log('last_name:', lastName );
+        console.log('first_name:', firstName);
+        console.log('email:', email);
+        console.log('source:', source);
+        console.log('reservation_number:', reservationNumber);
+        console.log('room_number:', roomNumber);
+        console.log('check_in:', checkIn);
+        console.log('check_out', checkOut);
         console.log('reservation_date:', ReservationDateTime.toISOString().split('T')[0]);
         console.log('reservation_time:', ReservationDateTime.toTimeString().substring(0, 5));
         console.log('reservation_full_datetime:', ReservationDateTime.toISOString());
@@ -216,79 +291,71 @@ const DataCode = {
         console.log('selected_cake:', selectedCake);
         console.log('cake_people:', numberOfPeople);
         console.log('restaurantMenus:', restaurantMenus);
+        if (!formIsValide) {
+                  return;}
 
         // Ici vous enverriez les données à votre API
         };
 
 
 
-    function SelectDate({
-      label,
-      value,
-      onChange,
-      minimumDate = null,
-    }: {
-      label: string;
-      value: Date;
-      onChange: (date: Date) => void;
-      minimumDate?: Date | null;
-    }) {
-        const handleChange = (event: any, selectedDate?: Date) => {
-          setShowPicker(Platform.OS === 'ios');
-          if (selectedDate) {
-            onChange(selectedDate);
-          }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function SelectDate ( { label , value , onChange , minimumDate = null ,}: SelectedDatesProps){
+    const [showPicker , setShowPicker] = useState(false);
+    const handleChange = ( event: any , selectedDate?: Date ) => {
+        setShowPicker( Platform.OS === 'ios');
+        if ( selectedDate){ onChange(selectedDate);}
         };
-        return (
-          <View style={styles.container}>
-            {label && <Text style={styles.label}>{label}</Text>}
+    return (
+        <View style = {styles.container}>
+            {label && < Text style={styles.label}> {label} </Text>}
             <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowPicker(true)}
-              activeOpacity={0.7}
+               style = {styles.input }
+               onPress = { ()=> setShowPicker(true)}
+               activeOpacity = {0.7}
             >
-              <Text style={styles.dateText}>
-                {value.toLocaleDateString('fr-FR', {
-                  weekday: 'short',
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </Text>
+                <Text style ={styles.dateText}>
+                   {value.toLocaleDateString( 'fr-FR', {
+                       weekday: 'short',
+                       day: 'numeric',
+                       month: 'long',
+                       year: 'numeric',
+                       })}
+                </Text>
             </TouchableOpacity>
 
             {showPicker && (
-              <DateTimePicker
-                value={value}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={handleChange}
-                locale="fr-FR"
-                minimumDate={minimumDate || undefined}
-                themeVariant="light"
-              />
-            )}
-          </View>
+                <DateTimePicker
+                  value ={value}
+                  mode= "date"
+                  display= {Platform.OS === 'ios' ? 'spinner': 'default'}
+                  onChange={handleChange}
+                  locale= "fr-FR"
+                  minimumDate= {minimumDate || undefined }
+                  themeVariant = "light"
+                /> )}
+        </View>
         );
-      }
+}
 
 
     const handleCheckInChange = (newDate: Date) =>{
         setCheckIn(newDate)
-        if (newDate >= CheckOut) {
+        if (newDate >= checkOut) {
                 const nextDay = new Date(newDate);
                 nextDay.setDate(nextDay.getDate() + 1);
                 setCheckOut(nextDay);
         };
     };
-    const minCheckoutDate = new Date(CheckIn);
+    const minCheckoutDate = new Date(checkIn);
         minCheckoutDate.setDate(minCheckoutDate.getDate() + 1);
     const handleCheckOutChange = (newDate: Date) => {
         setCheckOut(newDate);
         checkIfShowFields();
     };
     const checkIfShowFields = () => {
-    if (CheckIn && CheckOut) {
+    if (checkIn && checkOut) {
         setShowReservationField(true);
         setShowCakeSelection(true);
     }
@@ -478,9 +545,27 @@ const DataCode = {
       const categoryKey = category.toLowerCase();
 
       newMenus[personNumber - 1].menu[categoryKey as keyof MenuSelection] = itemId;
-
       setPersonMenus(prev => ({ ...prev, [restaurant]: newMenus }));
+
+      // ➕ Mise à jour des erreurs si le formulaire a été soumis
+      if (hasSubmittedMenus) {
+        const personKey = `${restaurant}-${personNumber}`;
+        const updatedMenu = newMenus[personNumber - 1].menu;
+
+        const allNone = Object.values(updatedMenu).every(
+          (val) => val === '' || val === 'none'
+        );
+
+        setMenuErrors(prev => ({
+          ...prev,
+          [personKey]: {
+            ...(prev[personKey] || {}),
+            menuError: allNone ? 'Select at least one dish (not all None)' : '',
+          },
+        }));
+      }
     };
+
 
 // fonctions du prix total ////////////////////////////////////////////////////////////////
 
@@ -599,50 +684,104 @@ return (
          <View style={styles.row}>
          <View style={styles.inputWrapper}>
          <Input
-            label="Last name "
-            placeholder="your last name "
-            value={LastName}
-            onChangeText={setLastName}
-         />
+          label='Last Name'
+          placeholder="your last name"
+          value={lastName}
+          onChangeText={(text) => { setLastName(text); setLastNameTouched(true); setLastNameError(text ? '' : ' ');}}
+          onBlur={() => { setLastNameTouched(true); setLastNameError(lastName ? '' : ' '); }}
+          touched={lastNameTouched}
+          isvalide={isvalide}
+          error={lastNameError}
+          />
          </View>
+
          <View style={styles.inputWrapper}>
          <Input
             label="First name"
             placeholder="your first name"
-            value={FirstName}
-            onChangeText={setFirstName}
+            value={firstName}
+            onChangeText={(text)=> { setFirstName(text); setFirstNameTouched(true); setLastNAmeError(text ? '' : ' ');} }
+            onBlur={() => { setFirstNameTouched(true); setFirstNameError(firstName ? '' : ' '); } }
+            touched= {firstNameTouched}
+            isvalide={isvalide}
+            error={firstNameError}
          />
          </View>
          </View>
          <Input
-            label="Adresse email"
-            placeholder="exemple@email.com"
-            value={Email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+           label='Email'
+           placeholder="exemple@email.com"
+           value={email}
+           keyboardType="email-address"
+           onChangeText={(text) => {
+             setEmail(text);
+             setEmailTouched(true);
+
+             if (hasSubmitted) {
+               // Vérification dynamique après le submit
+               if (!text) setEmailError("Email requis");
+               else if (!emailRegex.test(text)) setEmailError("Adresse email invalide");
+               else setEmailError("");
+             }
+           }}
+
+           onBlur={() => {
+             setEmailTouched(true);
+             if (!email) setEmailError("Email requis");
+             else if (!emailRegex.test(email)) setEmailError("Adresse email invalide");
+             else setEmailError("");
+           }}
+
+           touched={emailTouched}
+           isvalide={isvalide}
+           error={emailError}
          />
+
          <Input
-             label="Numéro de réservation dans l'hôtel"
-             placeholder="Entrez le numéro de réservation"
-             value={ReservationNumber}
-             onChangeText={setReservationNumber}
-             keyboardType="default"
+           label='Reservation Number'
+           placeholder="your reservation number"
+           value={reservationNumber}
+           onChangeText={(text) => {
+             setReservationNumber(text);
+             setReservationNumberTouched(true);
+             setReservationNumberError(text ? '' : ' ');
+           }}
+           onBlur={() => {
+             setReservationNumberTouched(true);
+             setReservationNumberError(reservationNumber ? '' : ' ');
+           }}
+           touched={reservationNumberTouched}
+           isvalide={isvalide}
+           error={reservationNumberError}
          />
+
          <View style={styles.row}>
          <View style={styles.inputWrapper}>
          <Input
-              label="Room Number "
-              placeholder={"Your room number"}
-              value={RoomNumber}
-              onChangeText={setRoomNumber}
-              keyboardType="numeric"
+           label='Room Number'
+           placeholder="your room number"
+           value={roomNumber}
+           onChangeText={(text) => {
+             setRoomNumber(text);
+             setRoomNumberTouched(true);
+             setRoomNumberError(text ? '' : ' ');
+           }}
+           onBlur={() => {
+             setRoomNumberTouched(true);
+             setRoomNumberError(roomNumber ? '' : ' ');
+           }}
+           touched={roomNumberTouched}
+           isvalide={isvalide}
+           error={roomNumberError}
+           keyboardType="numeric"
          />
+
          </View>
          <View style={styles.inputWrapper}>
          <Select
             label="Source"
-            selectedValue={Source}
-            onChangeValue={setSource}
+            selectedValue={source}
+            onValueChange={setSource}
             items={[
                 {label: 'select source' , value: 'select_source' },
                 {label: 'Agence' , value: 'agency'},
@@ -653,14 +792,14 @@ return (
          </View>
          <View style= {styles.row}>
          <SelectDate
-            label="Date d'arrivée "
-            value={CheckIn}
+            label="Check-in "
+            value={checkIn}
             onChange={handleCheckInChange}
             minimumDate={null}
          />
          <SelectDate
-            label="Date de départ "
-            value={CheckOut}
+            label="Check-out "
+            value={checkOut}
             onChange= {handleCheckOutChange}
             minimumDate={minCheckoutDate}
          />
@@ -668,6 +807,7 @@ return (
          </View>
 
 {/* Champ de sélection date/heure de reservation */}
+
 {showReservationField && (
 
         <View style={styles.dateTimeField}>
@@ -750,7 +890,7 @@ return (
 {/* Affichage conditionnel des restaurants */}
 <Text style={styles.sectionTitle}>Restaurants</Text>
 
-{calculateStayDuration(CheckIn, CheckOut) >= 4 ? (
+{calculateStayDuration(checkIn, checkOut) >= 4 ? (
   <View>
     {/* Steak House */}
     <View style={styles.restaurantContainer}>
@@ -871,38 +1011,84 @@ return (
 {restaurantMenus.map((menu) => {
   const peopleMenus = personMenus[menu.name] || [];
 
-  if (peopleMenus.length === 0) return null; // ✅ Affiche le menu SEULEMENT s’il y a des personnes
+  if (peopleMenus.length === 0) return null;
 
   return (
     <View key={menu.name} style={styles.menuContainer}>
-      <View style={styles.menuSection}>
-        <Text style={styles.menuTitle}>Restaurant Menu: {menu.name}</Text>
+      <Text style={styles.menuTitle}>Restaurant Menu: {menu.name}</Text>
 
-        {peopleMenus.map((person) => (
-          <View key={`${menu.name}-${person.person}`} style={styles.personContainer}>
+      {peopleMenus.map((person) => {
+        const personKey = `${menu.name}-${person.person}`;
+        const personError = menuErrors[personKey] || {};
+        const isValidName = person.name.trim().length > 0;
+        const allPlatesNoneOrEmpty = Object.values(person.menu).every(v => v === '' || v === 'none');
+        const showCheck = hasSubmittedMenus && isValidName && !allPlatesNoneOrEmpty;
+        const showError = hasSubmittedMenus && (!isValidName || allPlatesNoneOrEmpty);
+
+        return (
+          <View key={personKey} style={styles.personContainer}>
             <TouchableOpacity
               style={styles.personHeader}
               onPress={() => togglePersonExpansion(menu.name, person.person)}
             >
               <Text style={styles.personTitle}>Person {person.person}</Text>
               <View style={styles.iconContainer}>
+
+                {showCheck && <Check color="green" size={20} />}
+                {showError && <AlertCircle color="red" size={20} />}
                 <Icon
                   name={person.expanded ? "chevron-up" : "chevron-down"}
                   size={20}
                   color="#000"
                 />
+
               </View>
             </TouchableOpacity>
 
             {person.expanded && (
-              <View >
+              <View>
+                {/* Champ nom */}
                 <Input
                   label="Name"
                   placeholder="Enter full name"
                   value={person.name}
-                  onChangeText={(text) => updatePersonName(menu.name, person.person, text)}
+                  onChangeText={(text) => {
+                    updatePersonName(menu.name, person.person, text);
+                    // Mise à jour immédiate des erreurs en temps réel
+                    if (hasSubmittedMenus) {
+                      const newErrors = { ...menuErrors };
+                      const nameValid = text.trim().length > 0;
+                      newErrors[personKey] = {
+                        ...newErrors[personKey],
+                        nameError: nameValid ? '' : '-Name is required',
+                      };
+                      setMenuErrors(newErrors);
+                    }
+                  }}
+                  style={[
+                    styles.inputStyle,
+                    hasSubmittedMenus && personError.nameError
+                      ? { borderColor: 'red' }
+                      : hasSubmittedMenus && !personError.nameError
+                      ? { borderColor: 'green' }
+                      : {},
+                  ]}
                 />
 
+                {hasSubmittedMenus && personError.nameError && (
+                  <Text style={{ color: 'red', marginTop: 4 }}>
+                    {personError.nameError}
+                  </Text>
+                )}
+
+
+                {/* Erreur des plats */}
+                {menuErrors[`${menu.name}-${person.person}`]?.menuError && (
+                  <Text style={{ color: 'red', marginBottom: 8 }}>
+                    {menuErrors[`${menu.name}-${person.person}`].menuError}
+                  </Text>
+                )}
+                {/* Plats */}
                 {menu.categories.map((category) => (
                   <View key={category.name} style={styles.menuType}>
                     <Text style={styles.typeTitle}>{category.name}</Text>
@@ -931,7 +1117,6 @@ return (
                               )}
                             </View>
                           </View>
-
                           <Text style={styles.menuItemText}>{item.name}</Text>
                           {item.price !== undefined && (
                             <Text style={styles.price}>{item.price} DHs</Text>
@@ -944,11 +1129,12 @@ return (
               </View>
             )}
           </View>
-        ))}
-      </View>
+        );
+      })}
     </View>
   );
 })}
+
 
 
 {/* Affichage conditionnel des gateaux */}
@@ -958,12 +1144,57 @@ return (
 
         <View style={styles.peopleContainer}>
             <Text style={styles.inputContainer}>Number of people for the birthday cake </Text>
-            <TextInput
-                style={[styles.numberInput, { backgroundColor: '#ffebcd', }, { marginLeft: 10 }]}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+              <TextInput
+                style={[
+                  styles.numberInput,
+                  numberOfPeopleTouched && numberOfPeopleError
+                    ? { borderColor: 'red', borderWidth: 1 }
+                    : numberOfPeopleTouched && !numberOfPeopleError
+                    ? { borderColor: 'green', borderWidth: 1 }
+                    : {}
+                ]}
                 keyboardType="numeric"
                 value={numberOfPeople.toString()}
-                onChangeText={(text) => setNumberOfPeople(Number(text) || 0)}
-            />
+                onChangeText={(text) => {
+                  const number = Number(text) || 0;
+                  setNumberOfPeople(number);
+                  setNumberOfPeopleTouched(true);
+
+                  if (selectedCake !== null && (!number || number <= 0)) {
+                    setNumberOfPeopleError(' ');
+                  } else {
+                    setNumberOfPeopleError('');
+                  }
+                }}
+                onBlur={() => {
+                  setNumberOfPeopleTouched(true);
+                  if (selectedCake !== null && (!numberOfPeople || numberOfPeople <= 0)) {
+                    setNumberOfPeopleError(' ');
+                  } else {
+                    setNumberOfPeopleError('');
+                  }
+                }}
+              />
+
+              {/* ✅ Icône alignée à droite du champ */}
+              {numberOfPeopleTouched && (
+                <>
+                  {numberOfPeopleError ? (
+                    <AlertCircle color="red" size={20} style={{ marginLeft: 8 }} />
+                  ) : (
+                    <Check color="green" size={20} style={{ marginLeft: 8 }} />
+                  )}
+                </>
+              )}
+            </View>
+
+            {/* 🧨 Message d’erreur */}
+            {numberOfPeopleTouched && numberOfPeopleError !== '' && (
+              <Text style={{ color: 'red', marginLeft: 10, marginTop: 4 }}>{numberOfPeopleError}</Text>
+            )}
+
+
         </View>
 
         <View style={styles.cakesGrid}>
@@ -981,7 +1212,14 @@ return (
                             styles.radioButton,
                             selectedCake === cake.id && styles.radioButtonSelected
                         ]}
-                        onPress={() => setSelectedCake(cake.id)}
+                        onPress={() => {
+                          if (selectedCake === cake.id) {
+                            setSelectedCake(null); // désélectionner si déjà sélectionné
+                          } else {
+                            setSelectedCake(cake.id); // sélectionner un nouveau gâteau
+                          }
+                        }}
+
                     >
                         {selectedCake === cake.id && <View style={styles.radioButtonInner} />}
                     </TouchableOpacity>
@@ -1032,9 +1270,17 @@ return (
       setIsPromoValid(null);
     }}
   />
-  <TouchableOpacity onPress={handleValidatePromo} style={styles.promoButton}>
+  <TouchableOpacity
+    onPress={handleValidatePromo}
+    style={[
+      styles.promoButton,
+      promoCode.trim() === '' && styles.promoButtonDisabled
+    ]}
+    disabled={promoCode.trim() === ''}
+  >
     <Text style={styles.promoButtonText}>check</Text>
   </TouchableOpacity>
+
 </View>
 
 {isPromoValid === true && (
@@ -1064,434 +1310,3 @@ return (
        </ImageBackground>
     );
 }
-const styles = StyleSheet.create({
-    background: {
-      flex: 1,
-      width: '100%',
-      height: '100%',
-    },
-    overlay: {
-      flex: 1,
-      backgroundColor: 'rgba(245, 241, 241, 0.25)', // Fond semi-transparent
-    },
-    formContainer: {
-        backgroundColor: 'rgba(255,255,255,0.8)',
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 20,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-        paddingVertical: 10,
-        backgroundColor: '#f7b500',
-        borderRadius: 10,
-    },
-    headerIcon: {
-        marginRight: 10,
-    },
-    headerTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#FFF',
-        textAlign: 'center',
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    inputWrapper: {
-        flex: 1,
-        marginRight: 8,
-        marginBottom: 16,
-    },
-    container: {
-        marginBottom: 16,},
-    label: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8, },
-    input: {
-        backgroundColor: '#fff',
-        padding: 14,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',},
-    dateText: {
-        color:'#333',
-        fontSize:16,},
-    dateTimeField: {
-        marginBottom: 15,
-        marginTop: 10,
-    },
-    dateTimeInput: {
-        backgroundColor: '#fff',
-        padding: 14,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    dateTimeText: {
-        color: '#333',
-        fontSize: 15,
-    },
-
-    timePickerContainer: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#e0e0e0', // Couleur neutre
-        padding: 16,
-        width: '85%',
-        maxHeight: 300, // Hauteur maximale ajustée
-        minHeight: 200, // Hauteur minimale
-        alignSelf: 'center',
-    },
-    timePickerTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 12,
-        textAlign: 'center',
-        color: '#333',
-    },
-    timeSlotsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        padding: 4,
-    },
-    timeSlotButton: {
-        width: 60, // Réduit la largeur
-        height: 60, // Réduit la hauteur
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f8f8',
-        borderRadius: 8,
-        margin: 4,
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-    },
-    timeSlotButtonSelected: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
-    },
-    timeSlotText: {
-        fontSize: 14,
-        color: '#333',
-        fontWeight: '500',
-    },
-    timeSlotTextSelected: {
-        color: 'white',
-    },
-  inputContainer: {
-    marginTop: 10,
-    marginBottom: 5,
-    backgroundColor: '#ffebcd',
-    padding: 13,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-    flex: 1,
-  },
-
-
-
-
-restaurantContainer: {
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-},
-peopleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    marginTop: 10,
-},
-peopleLabel: {
-    fontSize: 14,
-    color: '#000',
-    marginRight: 5,
-},
-numberInput: {
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderRadius: 5,
-    padding: 8,
-    width: 60,
-    textAlign: 'center',
-    backgroundColor: '#FFF',
-},
-
-
-
-menuContainer: {
-  marginTop: 20,
-  backgroundColor: 'rgba(255,255,255,0.8)',
-  borderRadius: 10,
-  padding: 20,
-},
-menuSection: {
-  marginBottom: 20,
-},
-menuTitle: {
-  fontSize: 19,
-  fontWeight: 'bold',
-  marginBottom: 15,
-  color: '#333',
-},
-personContainer: {
-  marginBottom: 15,
-  borderBottomWidth: 1,  // Ligne noire en bas
-  borderBottomColor: '#000',
-  paddingBottom: 10,     // Espace sous la ligne
-},
-personHeader: {
-  flexDirection: 'row',
-  justifyContent: 'space-between', // Pour pousser l'icône à droite
-  alignItems: 'center',
-  paddingVertical: 10,
-  width: '100%', // Prend toute la largeur
-},
-personTitle: {
-  fontWeight: 'bold',
-  fontSize: 18,
-  color: '#000',
-  flex: 1, // Prend tout l'espace disponible
-},
-iconContainer: {
-  marginLeft: 10, // Espace entre le texte et l'icône
-},
-menuType: {
-  marginTop: 15,
-},
-typeTitle: {
-  fontWeight: 'bold',
-  fontSize: 17,
-  marginBottom: 10,
-  color: '#1e90ff',
-},
-typeItem: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingVertical: 8,
-  borderBottomWidth: 1,
-  borderBottomColor: '#EEE',
-},
-checkboxContainer: {
-  marginRight: 10,
-},
-checkbox1: {
-  width: 20,
-  height: 20,
-  borderRadius: 4,
-  borderWidth: 2,
-  borderColor: '#666',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginRight: 10,
-},
-checkboxSelected: {
-  backgroundColor: '#f7b500',
-  borderColor: '#f7b500',
-},
-menuItemText: {
-  flex: 1,
-  color: '#000',
-  fontSize: 16,
-},
-
-
-
-cakesGrid: {
-    marginTop: 15,
-},
-cakeCard: {
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-},
-radioButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#f7b500',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-},
-radioButtonSelected: {
-    backgroundColor: '#f7b500',
-    borderColor: '#f7b500',
-},
-radioButtonInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#FFF',
-},
-
-
-
-  totalContainer: {
-    marginTop: 30,
-    backgroundColor: '#FFF5E1',
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  commentContainer: {
-    marginBottom: 20,
-  },
-  commentLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-  },
-    commentInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    minHeight: 60,
-    backgroundColor: '#fff',
-    textAlignVertical: 'top',
-  },
-commentToggleContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: 10,
-},
-checkbox: {
-  marginLeft: 10,
-},
-checkboxBox: {
-  width: 18,
-  height: 18,
-  borderWidth: 1,
-  borderColor: '#333',
-  borderRadius: 3,
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-
-checkboxInner: {
-  width: 10,
-  height: 10,
-  backgroundColor: '#333',
-  borderRadius: 1,
-},
-  promoContainer: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 8,
-  },
-  promoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8, // ou marginRight dans le bouton si React Native < 0.71
-  },
-  promoInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-  },
-  promoButton: {
-    backgroundColor: '#f7b500',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    marginLeft: 10,
-  },
-  promoButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  promoValid: {
-    color: 'green',
-    marginTop: 8,
-  },
-  promoInvalid: {
-    color: 'red',
-    marginTop: 8,
-  },
-  totalLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#f7b500',
-    marginBottom: 5,
-  },
-  totalValue: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#f7b500',
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-
-
-
-
-// style commun
-
-sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#f7b500',
-    marginBottom: 15,
-    marginTop: 20,
-    textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 10,
-    borderRadius: 8,
-},
-cardImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
-},
-cardName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000',
-    textAlign: 'center',
-},
-price: {
-    fontSize: 16,
-    color: '#000',
-    marginBottom: 10,
-},
-
-
-
-});

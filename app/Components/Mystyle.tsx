@@ -41,14 +41,15 @@ export const styles = StyleSheet.create({
     inputWrapper: {
         flex: 1,
         marginRight: 8,
-        marginBottom: 16,
+        marginBottom: 8,
+        marginTop: 4,
     },
     container: {
         marginBottom: 16,},
     label: {
         fontSize: 15,
         fontWeight: '600',
-        color: '#333',
+        color: '#666',
         marginBottom: 8, },
     input: {
         backgroundColor: '#fff',
@@ -125,19 +126,6 @@ export const styles = StyleSheet.create({
     timeSlotTextSelected: {
         color: 'white',
     },
-  inputContainer: {
-    marginTop: 10,
-    marginBottom: 5,
-    backgroundColor: '#ffebcd',
-    padding: 13,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-    flex: 1,
-  },
 
 
 
@@ -159,15 +147,7 @@ peopleLabel: {
     color: '#000',
     marginRight: 5,
 },
-numberInput: {
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderRadius: 5,
-    padding: 8,
-    width: 60,
-    textAlign: 'center',
-    backgroundColor: '#FFF',
-},
+
 
 
 
@@ -357,6 +337,9 @@ checkboxInner: {
     padding: 10,
     marginBottom: 10,
   },
+  promoButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
   promoButton: {
     backgroundColor: '#f7b500',
     paddingVertical: 10,
@@ -409,6 +392,28 @@ sectionTitle: {
     padding: 10,
     borderRadius: 8,
 },
+  inputContainer: {
+    marginTop: 10,
+    marginBottom: 5,
+    backgroundColor: '#ffebcd',
+    padding: 13,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+    flex: 1,
+  },
+  numberInput: {
+      borderWidth: 1,
+      borderColor: '#CCC',
+      borderRadius: 5,
+      padding: 8,
+      width: 60,
+      textAlign: 'center',
+      backgroundColor: '#FFF',
+  },
 cardImage: {
     width: '100%',
     height: 150,

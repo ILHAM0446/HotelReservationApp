@@ -13,7 +13,7 @@ import { Waves, Bus } from 'lucide-react-native';
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation<any>();
 
- useLanguage();
+  useLanguage();
   return (
       <>
     <ImageBackground
@@ -21,101 +21,75 @@ export default function HomeScreen(): JSX.Element {
       style={styles.background}
       blurRadius={2}
     >
+        <Header />
 
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <SafeAreaView style={styles.container}>
+            <View style={styles.welcomeSection}>
+              <Text style={styles.welcomeTitle}>{i18n.t('welcome')}</Text>
+              <Text style={styles.welcomeText}>
+                {i18n.t('welcometext')}
+              </Text>
+            </View>
 
-<LinearGradient
-        colors={['rgba(30, 64, 175, 0.2)', 'rgba(59, 130, 246, 0.3)']}
-        style={styles.overlay}>
- <Header />
+            {/* Service Cards */}
+            <View style={styles.servicesContainer}>
+              <TouchableOpacity
+                style={styles.serviceCard}
+                onPress={() => navigation.navigate('Piscine')}
+                activeOpacity={0.8}>
+                <View style={styles.iconCircle}>
+                  <Waves size={32} color="white" />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>{i18n.t('buttonPiscine')}</Text>
+                  <Text style={styles.cardDescription}>
+                    {i18n.t('descriptionPiscine')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
+              <TouchableOpacity
+                style={styles.serviceCard}
+                onPress={() => navigation.navigate('TransportForm')}
+                activeOpacity={0.8}>
+                <View style={styles.iconCircle}>
+                  <Bus size={32} color="white" />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>{i18n.t('buttonTransport')}</Text>
+                  <Text style={styles.cardDescription}>
+                    {i18n.t('descriptionTransport')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-      <SafeAreaView style={styles.container}>
-
-
-             <View style={styles.welcomeSection}>
-                    <Text style={styles.welcomeTitle}>{i18n.t('welcome')}</Text>
-                    <Text style={styles.welcomeText}>
-                      {i18n.t('welcometext')}
-                    </Text>
-                  </View>
-
-                  {/* Service Cards */}
-                  <View style={styles.servicesContainer}>
-                    <TouchableOpacity
-                      style={styles.serviceCard}
-                      onPress={() => navigation.navigate('Piscine')}
-                      activeOpacity={0.8}>
-                      <LinearGradient
-                        colors={['#f9b300', '#FFD600']}
-                        style={styles.cardGradient}>
-                        <View style={styles.cardIcon}>
-                          <Waves size={35} color="white" />
-                        </View>
-                        <Text style={styles.cardTitle}>{i18n.t('buttonPiscine')}</Text>
-                        <Text style={styles.cardDescription}>
-                          {i18n.t('descriptionPiscine')}
-                        </Text>
-                        <View style={styles.cardButton}>
-                          <Text style={styles.cardButtonText}>{i18n.t('ButtonReserver')}</Text>
-                        </View>
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.serviceCard}
-                      onPress={() => navigation.navigate('TransportForm')}
-                      activeOpacity={0.8}>
-                      <LinearGradient
-                        colors={['#1e40af', '#3b82f6']}
-                        style={styles.cardGradient}>
-                        <View style={styles.cardIcon}>
-                          <Bus size={35} color="white" />
-                        </View>
-                        <Text style={styles.cardTitle}>{i18n.t('buttonTransport')}</Text>
-                        <Text style={styles.cardDescription}>
-                          {i18n.t('descriptionTransport')}
-                        </Text>
-                        <View style={styles.cardButton}>
-                          <Text style={styles.cardButtonText}>{i18n.t('ButtonReserver')}</Text>
-                        </View>
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.serviceCard}
-                      onPress={() => navigation.navigate('Restaurant')}
-                      activeOpacity={0.8}>
-                      <LinearGradient
-                        colors={['#f9b300', '#FFD600']}
-                        style={styles.cardGradient}>
-                        <View style={styles.cardIcon}>
-                           <Icon name="silverware-fork-knife" size={35} color="white" />
-                        </View>
-                        <Text style={styles.cardTitle}>{i18n.t('buttonRestaurant')}</Text>
-                        <Text style={styles.cardDescription}>
-                          {i18n.t('descriptionRestaurant')}
-                        </Text>
-                        <View style={styles.cardButton}>
-                          <Text style={styles.cardButtonText}>{i18n.t('ButtonReserver')}</Text>
-                        </View>
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    </View>
-                    </SafeAreaView>
-
-</ScrollView>
-
-
-            </LinearGradient>
-
+              <TouchableOpacity
+                style={styles.serviceCard}
+                onPress={() => navigation.navigate('Restaurant')}
+                activeOpacity={0.8}>
+                <View style={styles.iconCircle}>
+                  <Icon name="silverware-fork-knife" size={32} color="white" />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>{i18n.t('buttonRestaurant')}</Text>
+                  <Text style={styles.cardDescription}>
+                    {i18n.t('descriptionRestaurant')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </ScrollView>
     </ImageBackground>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-      overlay: {
-        flex: 1,
-      },
+  overlay: {
+    flex: 1,
+  },
   background: {
     flex: 1,
     resizeMode: 'cover',
@@ -126,10 +100,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   scrollContent: {
-      flexGrow: 1,
-      paddingBottom: 20,
-    },
-welcomeSection: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  welcomeSection: {
     alignItems: 'center',
     marginBottom: 40,
   },
@@ -148,6 +122,7 @@ welcomeSection: {
   servicesContainer: {
     gap: 20,
     marginBottom: 40,
+    alignItems: 'center',
   },
   serviceCard: {
     borderRadius: 20,
@@ -159,45 +134,38 @@ welcomeSection: {
     },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-  },
-  cardGradient: {
-    padding: 5,
-    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    padding: 15,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical:15,
-    marginHorizontal: 10,
+    width: '90%',
+    height: 100,
+    overflow: 'hidden',
   },
-  cardIcon: {
-    marginBottom: 15,
+  iconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    backgroundColor: 'rgba(0, 122, 255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
-    textAlign: 'center',
+    color: '#007AFF',
+    marginBottom: 5,
+    textAlign: 'left',
   },
   cardDescription: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 20,
+    color: '#333',
+    textAlign: 'left',
+    lineHeight: 18,
   },
-  cardButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  cardButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-
 });
-
-

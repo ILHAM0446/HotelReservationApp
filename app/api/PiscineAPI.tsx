@@ -24,7 +24,7 @@ export async function checkCapacite(
       }),
     });
     const text = await response.text(); // ✅ Lire une seule fois
-    console.log('📦 Réponse brute:', text);
+    //console.log('📦 Réponse brute:', text);
 
     const json = JSON.parse(text);
     const resData = json?.data;
@@ -164,7 +164,7 @@ export async function CreateReservation(payload: ReservationPayload): Promise<Cr
 
 
     const json = await response.json();
-    console.log('Réponse JSON brute:', json);
+    //console.log('Réponse JSON brute:', json);
 
     const status = json?.status;
     const reference = json?.reservation_ref;

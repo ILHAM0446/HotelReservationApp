@@ -237,11 +237,14 @@ row: {
 label: {
   fontSize: 14,
   color: '#333',
+  flex: 1,
 },
 value: {
   fontSize: 14,
   color: '#000',
   fontWeight: '500',
+  flex: 2,
+  flexWrap: 'wrap',
 },
 labelBold: {
   fontSize: 15,
@@ -505,6 +508,7 @@ promoButton:{marginLeft: 8,
    },
    modalCard: {
      width: '90%',
+     maxWidth: '90%',
      backgroundColor: '#fff',
      borderRadius: 12,
      padding: 20,
@@ -545,6 +549,7 @@ promoButton:{marginLeft: 8,
      borderRadius: 8,
      paddingVertical: 10,
      marginBottom: 20,
+     maxHeight: 200,
    },
    row: {
      flexDirection: 'row',
@@ -555,11 +560,14 @@ promoButton:{marginLeft: 8,
    label: {
      fontSize: 14,
      color: '#333',
+     flex: 1,
    },
    value: {
      fontSize: 14,
      color: '#000',
      fontWeight: '500',
+     flex: 2,
+     flexWrap: 'wrap',
    },
    labelBold: {
      fontSize: 15,

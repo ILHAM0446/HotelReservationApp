@@ -60,6 +60,22 @@ export default function PiscineScreen(): JSX.Element {
   const [EnfantDemiJournee, setEnfantDemiJournee] = useState(150);
   const [BebeDemiJournee, setBebeDemiJournee] = useState(0);
   const [messageCapacite, setMessageCapacite] = useState('');
+  const [isvalide, setIsvalide] = useState(false);
+  // États de validation pour chaque champ
+    const [nomTouched, setNomTouched] = useState(false);
+    const [nomError, setNomError] = useState('');
+    const [prenomTouched, setPrenomTouched] = useState(false);
+    const [prenomError, setPrenomError] = useState('');
+    const [emailTouched, setEmailTouched] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [telephoneTouched, setTelephoneTouched] = useState(false);
+    const [telephoneError, setTelephoneError] = useState('');
+    const [adultesTouched, setAdultesTouched] = useState(false);
+    const [adultesError, setAdultesError] = useState('');
+    // Pour Date, Enfants, Bebes, ils sont toujours considérés valides et "touchés" après soumission
+      const [dateTouched, setDateTouched] = useState(false);
+      const [enfantsTouched, setEnfantsTouched] = useState(false);
+      const [bebesTouched, setBebesTouched] = useState(false);
 
   const router = useRouter();
 
@@ -86,6 +102,15 @@ export default function PiscineScreen(): JSX.Element {
     setSignature('');
     setMessageCapacite('');
     setModalVisible(false);
+    setNomTouched(false); setNomError('');
+        setPrenomTouched(false); setPrenomError('');
+        setEmailTouched(false); setEmailError('');
+        setTelephoneTouched(false); setTelephoneError('');
+        setAdultesTouched(false); setAdultesError('');
+        setDateTouched(false);
+        setEnfantsTouched(false);
+        setBebesTouched(false);
+        setIsvalide(false);
   };
 
   React.useEffect(() => {
@@ -97,6 +122,7 @@ export default function PiscineScreen(): JSX.Element {
       setDate(selectedDate);
     }
     setShowDatePicker(false);
+    setDateTouched(true);
   };
 
   const validateEmail = (email: string): boolean =>
@@ -165,17 +191,18 @@ export default function PiscineScreen(): JSX.Element {
     Price()
   );
 
-  React.useEffect(() => {
-    const verifierCapacite = async () => {
-      const result = await checkCapacite(date, Adultes, Enfants, Bebes);
-      if (!result.ok) {
-        setMessageCapacite(result.message);
-      } else {
-        setMessageCapacite('');
-      }
-    };
-    verifierCapacite();
-  }, [date, Adultes, Enfants, Bebes]);
+ React.useEffect(() => {
+     const timer = setTimeout(async () => {
+       const result = await checkCapacite(date, Adultes, Enfants, Bebes);
+       if (!result.ok) {
+         setMessageCapacite(result.message);
+       } else {
+         setMessageCapacite('');
+       }
+     }, 300);
+
+     return () => clearTimeout(timer);
+   }, [date, Adultes, Enfants, Bebes]);
 
   const handleReservation = async () => {
     const payload = {
@@ -215,27 +242,53 @@ export default function PiscineScreen(): JSX.Element {
   };
 
   const handleSubmit = async (): Promise<void> => {
-    if (!nom || !prenom || !Email || !telephone || !date || !Adultes) {
-      alert(i18n.t('error'));
-      return;
-    }
-    if (!validateEmail(Email)) {
-      alert(i18n.t('invalidEmail'));
-      return;
-    }
-    const capaciteResult = await checkCapacite(date, Adultes, Enfants, Bebes);
-    if (!capaciteResult.ok) {
-      alert(capaciteResult.message);
-      return;
-    }
-    const result = await handleReservation();
-    console.log("Résultat retour API:", result);
-    if (result.statut) {
-      setSuccessMessage(result.Message);
-      setModalVisible(true);
-    } else {
-      alert(i18n.t('ErrorInconnue'));
-    }
+      setIsvalide(true);
+    let formIsValid = true;
+
+        setNomTouched(true);
+        if (!nom) { setNomError(' '); formIsValid = false; } else { setNomError(''); }
+
+        // Validation Prenom
+        setPrenomTouched(true);
+        if (!prenom) { setPrenomError(' '); formIsValid = false; } else { setPrenomError(''); }
+
+        setEmailTouched(true);
+        if (!Email || !validateEmail(Email)) { setEmailError(i18n.t('invalidEmail')); formIsValid = false; } else { setEmailError(''); }
+
+
+        setTelephoneTouched(true);
+        if (!telephone) { setTelephoneError(' '); formIsValid = false; } else { setTelephoneError(''); }
+
+        setAdultesTouched(true);
+
+        if (Adultes < 1 || isNaN(Adultes)) { setAdultesError(' '); formIsValid = false; } else { setAdultesError(''); }
+
+
+        setDateTouched(true);
+        setEnfantsTouched(true);
+        setBebesTouched(true);
+
+          if (!formIsValid) {
+            return;
+          }
+
+        const capaciteResult = await checkCapacite(date, Adultes, Enfants, Bebes);
+            if (!capaciteResult.ok) {
+              setMessageCapacite(capaciteResult.message);
+              return;
+            } else {
+              setMessageCapacite('');
+            }
+
+            const result = await handleReservation();
+            //console.log("Résultat retour API:", result);
+
+            if (result.statut) {
+              setSuccessMessage(result.Message);
+              setModalVisible(true);
+            } else {
+              alert(i18n.t('ErrorInconnue'));
+            }
   };
 
   return (
@@ -297,20 +350,27 @@ export default function PiscineScreen(): JSX.Element {
                   <Text style={Screenstyles.TitleForm}>{i18n.t('enterData')}</Text>
                   <View style={Screenstyles.inputRow}>
                     <View style={Screenstyles.inputHalf}>
-                      <Input label={i18n.t('name')} value={nom} onChangeText={setNom} />
+                      <Input label={i18n.t('name')} value={nom} onChangeText={(text) => { setNom(text); setNomTouched(true); setNomError(text ? '' : ' ');}} onBlur={() => { setNomTouched(true); setNomError(nom ? '' : ' '); }} touched={nomTouched} isvalide={isvalide} error={nomError} />
                     </View>
                     <View style={Screenstyles.inputHalf}>
-                      <Input label={i18n.t('firstName')} value={prenom} onChangeText={setPrenom} />
+                      <Input label={i18n.t('firstName')} value={prenom} onChangeText={(text) => { setPrenom(text); setPrenomTouched(true); setPrenomError(text ? '' : ' ');}} onBlur={() => { setPrenomTouched(true); setPrenomError(nom ? '' : ' '); }} touched={prenomTouched} isvalide={isvalide} error={prenomError} />
                     </View>
                   </View>
-                  <Input label={i18n.t('email')} value={Email} onChangeText={setEmail} placeholder={i18n.t('placeholderEmail')} keyboardType="email-address" />
+                  <Input label={i18n.t('email')} value={Email} onChangeText={(text) => {setEmail(text); setEmailTouched(true); setEmailError(validateEmail(Email) ? '' : i18n.t('invalidEmail'));}} placeholder={i18n.t('placeholderEmail')} onBlur={() => { setEmailTouched(true); setEmailError(validateEmail(Email) ? '' : i18n.t('invalidEmail')); }} touched={emailTouched} isvalide={isvalide} error={emailError} keyboardType="email-address" />
                   <View style={Screenstyles.inputRow}>
                     <View style={Screenstyles.inputHalf}>
                       <Input
                         label={i18n.t('phone')}
                         value={telephone}
-                        onChangeText={setTelephone}
+                        onChangeText={(text) => { setTelephone(text); setTelephoneTouched(true); setTelephoneError(telephone ? '' : ' ');}}
                         placeholder= "06 XX XX XX XX"
+                        onBlur={() => {
+                          setTelephoneTouched(true);
+                          setTelephoneError(telephone ? '' : ' ');
+                        }}
+                        touched={telephoneTouched}
+                        isvalide={isvalide}
+                        error={telephoneError}
                         keyboardType="numeric"
                       />
                     </View>
@@ -379,21 +439,25 @@ export default function PiscineScreen(): JSX.Element {
                         onChangeText={(text) => {
                           const num = Number(text);
                           setAdultes(num);
+                          setAdultesTouched(true);
+                          setAdultesError(num < 1 || isNaN(num) ? ' ' : '');
                         }}
                         onBlur={() => {
-                          if (Adultes < 1 || isNaN(Adultes)) {
-                            setAdultes(1);
-                          }
+                          setAdultesTouched(true);
+                          setAdultesError(Adultes < 1 || isNaN(Adultes) ? ' ' : '');
                         }}
+                        touched={adultesTouched}
+                        isvalide={isvalide}
+                        error={adultesError}
                       />
                     </View>
                     <View style={Screenstyles.inputHalf}>
                       <Text style={Screenstyles.dropdownLabel}>{i18n.t('children')}</Text>
-                      <Input value={String(Enfants)} onChangeText={(text) => setEnfants(Number(text))} keyboardType="numeric" />
+                      <Input value={String(Enfants)} onChangeText={(text) =>{ setEnfants(Number(text)); setEnfantsTouched(true);}} onBlur={() => { setEnfantsTouched(true); }} touched={enfantsTouched} isvalide={isvalide} keyboardType="numeric" />
                     </View>
                     <View style={Screenstyles.inputHalf}>
                       <Text style={Screenstyles.dropdownLabel}>{i18n.t('babies')}</Text>
-                      <Input value={String(Bebes)} onChangeText={(text) => setBebes(Number(text))} keyboardType="numeric" />
+                      <Input value={String(Bebes)} onChangeText={(text) => {setBebes(Number(text)); setBebesTouched(true);}} onBlur={() => { setBebesTouched(true); }} touched={bebesTouched} isvalide={isvalide} keyboardType="numeric" />
                     </View>
                   </View>
                   {messageCapacite !== '' && (
@@ -468,27 +532,27 @@ export default function PiscineScreen(): JSX.Element {
             <Text style={Screenstyles.modalSubtitle}>{i18n.t('Thanks')}</Text>
             <View style={Screenstyles.infoBox}>
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('NomComplet')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('NomComplet')}:</Text>
                 <Text style={Screenstyles.value}>{prenom} {nom}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('email')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('email')}:</Text>
                 <Text style={Screenstyles.value}>{Email}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('date')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('date')}:</Text>
                 <Text style={Screenstyles.value}>{date.toLocaleDateString()}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.label}>{i18n.t('Reference')}</Text>
+                <Text style={Screenstyles.label}>{i18n.t('Reference')}:</Text>
                 <Text style={Screenstyles.value}>{reference}</Text>
               </View>
               <View style={Screenstyles.divider} />
               <View style={Screenstyles.row}>
-                <Text style={Screenstyles.labelBold}>{i18n.t('totalPrice')}</Text>
+                <Text style={Screenstyles.labelBold}>{i18n.t('totalPrice')}:</Text>
                 <Text style={Screenstyles.valueBold}>{statutcode ? `${FinalPrice} DH` : `${Price()} DH`}</Text>
               </View>
             </View>
